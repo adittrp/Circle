@@ -1,23 +1,41 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 export function Wordmark({
   href = "/",
   compact = false,
+  className = "",
 }: {
   href?: string;
   compact?: boolean;
+  className?: string;
 }) {
   return (
-    <Link href={href} className="flex items-center gap-2">
-      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-600 font-display text-lg font-bold text-white">
-        C
-      </span>
-      {compact ? null : (
-        <span className="font-display text-xl font-bold tracking-tight text-slate-900">
-          Circle
-        </span>
+    <Link
+      href={href}
+      className={`inline-flex items-center ${className}`}
+      aria-label="Circle home"
+    >
+      {compact ? (
+        <Image
+          src="/brand/circle-mark.svg"
+          alt="Circle"
+          width={36}
+          height={36}
+          className="h-9 w-9"
+          priority
+        />
+      ) : (
+        <Image
+          src="/brand/circle-wordmark.svg"
+          alt="Circle"
+          width={140}
+          height={40}
+          className="h-9 w-auto"
+          priority
+        />
       )}
     </Link>
   );

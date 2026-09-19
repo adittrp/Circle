@@ -8,11 +8,20 @@ import { useIdentity } from "@/context/IdentityContext";
 export function AppHeader() {
   const { profile, university, configured } = useIdentity();
   const name = profile?.first_name;
+  const onboarded = Boolean(profile?.onboarding_completed_at);
 
   return (
     <header className="mb-8 flex items-center justify-between gap-3">
       <Wordmark />
       <div className="flex items-center gap-2">
+        {configured && onboarded ? (
+          <Link
+            href="/campus"
+            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+          >
+            Campus
+          </Link>
+        ) : null}
         {university ? (
           <span
             className="hidden rounded-full px-3 py-1 text-xs font-semibold sm:inline"

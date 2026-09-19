@@ -45,7 +45,8 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/profile") ||
     path.startsWith("/people") ||
     path.startsWith("/dev/matching") ||
-    path.startsWith("/trust");
+    path.startsWith("/trust") ||
+    path.startsWith("/campus");
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
@@ -76,7 +77,8 @@ export async function updateSession(request: NextRequest) {
         path.startsWith("/profile") ||
         path.startsWith("/people") ||
         path.startsWith("/dev/matching") ||
-        path.startsWith("/trust"))
+        path.startsWith("/trust") ||
+        path.startsWith("/campus"))
     ) {
       const url = request.nextUrl.clone();
       url.pathname = "/onboarding";

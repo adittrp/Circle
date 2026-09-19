@@ -220,6 +220,20 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
+        <section className="card-surface mt-4 p-6">
+          <h2 className="font-display text-xl font-bold">Campus</h2>
+          <p className="mt-2 text-slate-600">
+            See what&apos;s happening around you — communities, plans forming, and
+            people looking to meet up.
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push("/campus")}
+            className="mt-4 inline-flex items-center justify-center rounded-2xl bg-teal-600 px-5 py-3 text-base font-semibold text-white shadow-lg shadow-teal-600/25 hover:bg-teal-700"
+          >
+            Open campus
+          </button>
+        </section>
       </main>
     );
   }

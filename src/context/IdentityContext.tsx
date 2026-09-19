@@ -329,7 +329,18 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
   }, [refresh]);
 
   const completeOnboarding = useCallback(async () => {
-    return saveProfile({ onboarding_completed_at: new Date().toISOString() } as Partial<Profile>);
+    const result = await saveProfile({
+      onboarding_completed_at: new Date().toISOString(),
+    } as Partial<Profile>);
+    if (!result.error) {
+      try {
+        const { syncMyCommunities } = await import("@/lib/campus/api");
+        await syncMyCommunities();
+      } catch {
+        // Campus sync is best-effort; profile completion still succeeds.
+      }
+    }
+    return result;
   }, [saveProfile]);
 
   const uploadAvatar = useCallback(
