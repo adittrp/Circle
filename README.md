@@ -2,7 +2,7 @@
 
 College friendships that actually happen.
 
-Circle places students into small groups and helps turn introductions into actual plans. This repo currently owns **Path 1** (identity, `.edu` auth, campus catalog, onboarding). Paths 2–4 have empty-but-ready tables — see [SCHEMA.md](./SCHEMA.md).
+This repo owns **Path 1** (identity) and **Path 4** (campus communities). Paths 2/3/5 integrate via shared schema — see [SCHEMA.md](./SCHEMA.md).
 
 ## Quick start
 
@@ -14,7 +14,18 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Without Supabase env vars, **demo matching** still runs offline (`/matching`, `/circle`) so Path 2 is not blocked.
+Without Supabase env vars, **demo matching** still runs offline (`/matching`, `/circle`).
+
+## Path 4 — Campus
+
+After onboarding, open **`/campus`**:
+
+- Auto communities from university / major / year / residence / interests
+- Community feeds (Hot / New / Top) with comments, interest votes, saves
+- Public group creation (`/campus/groups/new`)
+- Campus search (`/campus/search`)
+- Post → Plan and Post → Circle (writes real `circles` / `activities`)
+- In-app notifications
 
 ## Environment
 
@@ -27,16 +38,6 @@ Without Supabase env vars, **demo matching** still runs offline (`/matching`, `/
 
 Do not commit `.env.local`.
 
-## Path 1 flow
-
-1. Landing → **Find My Circle** (`/signup`)
-2. School email (must end in `.edu`) → magic link / OTP
-3. `/verify` → `/onboarding` (basics, university, interests, availability, optional vibe)
-4. `/home` — real users stay here even with no demo circle
-5. `/profile` to edit visibility and sign out
-
-Matching UI at `/matching` and `/circle` is still the localStorage demo.
-
 ## Scripts
 
 ```bash
@@ -44,12 +45,10 @@ npm run dev
 npm run lint
 npm run typecheck
 npm run build
-npm run seed:campus   # needs SUPABASE_SERVICE_ROLE_KEY
-npm run seed:test     # optional synthetic students; is_synthetic = true
+npm run seed:campus
+npm run seed:test
 ```
 
 ## Schema
 
-Full table map, ownership, and “do not query” notes: **[SCHEMA.md](./SCHEMA.md)**.
-
-Generated types: `src/lib/supabase/database.types.ts`. Use `InterestRow` for catalog interests — Path 2’s demo `Interest` union lives in `src/lib/types.ts`.
+Full table map and path boundaries: **[SCHEMA.md](./SCHEMA.md)**.

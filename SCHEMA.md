@@ -4,9 +4,19 @@ Canonical user id is **`profiles.id`**. `auth.users.id` is stored as `profiles.a
 
 Do not query `profiles.email`. Use `student_directory` for other students. Filter `is_synthetic = false` out of production matching.
 
-RLS helpers live in the **`private`** schema (`current_profile_id`, `current_university_id`, `is_circle_member`, `is_community_member`). Do not recreate them in `public`, and do not use `user_metadata` in policies.
+RLS helpers live in the **`private`** schema (`current_profile_id`, `current_university_id`, `is_circle_member`, `is_community_member`, `can_view_community`, `sync_communities_for_profile`). Do not recreate them in `public`, and do not use `user_metadata` in policies.
 
-## Path 1 — Identity / campus (this team)
+## Path numbering
+
+| Product path | Owns | SCHEMA / migration label |
+| --- | --- | --- |
+| Path 1 | Identity / campus catalog | Path 1 |
+| Path 2 | Matching | (app + matching tables stubs) |
+| Path 3 | Private Circles + hangouts | SCHEMA Path 2 (+ hangout extensions) |
+| **Path 4** | **Campus communities & public groups** | SCHEMA Path 3 communities/posts (extended) |
+| Path 5 | Trust / safety | SCHEMA Path 4 trust tables |
+
+## Path 1 — Identity / campus
 
 | Object | Purpose |
 | --- | --- |
@@ -25,38 +35,56 @@ RLS helpers live in the **`private`** schema (`current_profile_id`, `current_uni
 
 Signup trigger `private.handle_new_user` requires a `.edu` email, creates a profile + preferences row, and records `profile_verifications` (`edu_email`).
 
-## Path 2 — Circles / activities (empty, ready)
+## Path 2 / 3 — Circles / activities / hangouts
 
 The **circle** is the persistent object, not a 1:1 match.
 
 | Object | Purpose |
 | --- | --- |
-| `circles` | Group on a campus; `stage` is `introduced` → `met_once` → `met_again` → `regular` |
+| `circles` | Group on a campus; optional `title` / `source_post_id` when created from a campus post |
 | `circle_members` | Membership. Partial unique `(circle_id, profile_id)` while `left_at` is null |
 | `activities` | Plans owned by a circle. Optional `campus_location_id` + `location_label` |
 | `activity_rsvps` | Own RSVP: `pending` / `in` / `cant` |
-| `activity_feedback` | Rate the **hang**, never other people. Unique per (activity, profile) |
+| `activity_feedback` | Rate the **hang**, never other people |
 | `matching_rounds` | Optional batch-matching stub |
 
-Users can insert a circle for their own university and manage their own membership/RSVP/feedback. Members can read circle rows they belong to.
+## Path 4 — Campus communities (product)
 
-## Path 3 — Communities / posts / chat (empty, ready)
-
-| Object | Purpose |
-| --- | --- |
-| `communities` | Campus-scoped groups (`major` / `campus` / `interest`) |
-| `community_members` | Own join/leave |
-| `posts` | Campus discussion. `source_url` reserved for a later extension. `suggested_activity_id` is the post→plan stub |
-| `messages` | Chat. Exactly one of `circle_id` **or** `community_id` must be set |
-
-## Path 4 — Trust / safety (empty, ready)
+University-scoped social layer. Online interaction should lead toward real-world connection.
 
 | Object | Purpose |
 | --- | --- |
-| `blocks` | Unique pair, no self-block. Users manage their own blocks |
-| `reports` | Reporter can insert/select their reports. Subject may be a profile, circle, or activity |
-| `karma_events` | Reliability events: `rsvp_kept`, `no_show`, `meetup_completed`. **Not a scientific friendship score** |
-| `profile_verifications` | Stub. `.edu` signup already writes `edu_email` |
+| `communities` | Campus-scoped groups. `kind`: `campus` (university), `major`, `residence`, `interest`, `year`, `class`, `custom`. Auto communities set `is_auto`. Public groups use `custom` + `is_discoverable` / constraints / `rules` / `member_limit` |
+| `community_members` | Own join/leave (`member_role`) |
+| `posts` | Community discussion. `intent`, `category`, `university_id`, `suggested_activity_id` (post→plan), `suggested_circle_id` (post→Circle), counters |
+| `post_comments` | Threaded replies on posts (not giant community chat) |
+| `post_votes` | Interest / ranking (`1` or `-1`). Drives Hot/Top |
+| `post_saves` | Save for later |
+| `notifications` | In-app notifications shared with Paths 2/3/5 |
+| `messages` | Chat for **Circles** (and membership-gated community chat only if needed — prefer posts for large communities) |
+
+### Public RPCs (authenticated)
+
+| RPC | Purpose |
+| --- | --- |
+| `sync_my_communities()` | Ensure + join university / major / year / residence / interest communities from profile |
+| `create_campus_group(...)` | Create discoverable/private custom group |
+| `create_plan_from_post(...)` | Author turns post into Circle + activity |
+| `create_circle_from_post(...)` | Author turns post into Circle; interested voters may be added |
+| `campus_search(query, limit)` | People / communities / Circles / posts (permission-aware) |
+
+Auto-sync also runs from profile onboarding triggers and `user_interests` changes via `private.sync_communities_for_profile`.
+
+Reports may include `post_id` / `community_id` hooks for Path 5.
+
+## Path 5 — Trust / safety
+
+| Object | Purpose |
+| --- | --- |
+| `blocks` | Unique pair, no self-block |
+| `reports` | Reporter insert/select; subjects may include profile, circle, activity, post, community |
+| `karma_events` | Reliability events — **not** a friendship score |
+| `profile_verifications` | Stub; `.edu` signup writes `edu_email` |
 
 ## What not to query
 
@@ -64,13 +92,14 @@ Users can insert a circle for their own university and manage their own membersh
 - `user_preferences` of anyone except yourself
 - Synthetic rows (`profiles.is_synthetic`) in production matching or `student_directory` (already excluded)
 - `auth.users.raw_user_meta_data` / `user_metadata` in RLS
-- Public RPC for identity helpers (they are not in `public`)
+- Public RPC for private identity helpers (they are not in `public`)
+- Exact private room numbers (residence communities are hall-level only)
 
 ## Auth / session
 
 - Magic link + OTP via `@supabase/ssr` cookies
 - Next.js 16 `src/proxy.ts` (not `middleware.ts`)
-- Unauthenticated `/onboarding`, `/home`, `/profile` → `/signin`
+- Unauthenticated `/onboarding`, `/home`, `/profile`, `/campus` → `/signin`
 - Authenticated incomplete → `/onboarding`
 - Authenticated complete → `/home`
 - `/matching` and `/circle` stay open for the Path 2 demo

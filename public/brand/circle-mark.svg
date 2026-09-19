@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Circle">
+  <circle cx="56" cy="60" r="38" stroke="#00B84D" stroke-width="10" fill="none"/>
+  <text x="56" y="68" text-anchor="middle" font-family="Arial Black, Helvetica Neue, Arial, sans-serif" font-size="52" font-weight="800" fill="#00B84D">C</text>
+  <circle cx="94" cy="60" r="12" fill="#00B84D"/>
+</svg>
