@@ -39,14 +39,17 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!profile || seeded) return;
-    setDraft({
+    const next = {
       first_name: profile.first_name ?? "",
       last_name: profile.last_name ?? "",
-      year: profile.year ?? "",
+      year: (profile.year ?? "") as YearLevel | "",
       hometown: profile.hometown ?? "",
       bio: profile.bio ?? "",
+    };
+    queueMicrotask(() => {
+      setDraft(next);
+      setSeeded(true);
     });
-    setSeeded(true);
   }, [profile, seeded]);
 
   if (!identity.ready) {

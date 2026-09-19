@@ -28,7 +28,7 @@ function VerifyBody() {
         ) : (
           " to your school email"
         )}
-        . Open it on this device — you&apos;ll come back here already signed in.
+        . Open it on this device. That click signs you in — you should not need a second email.
       </p>
       <p className="mt-8 text-sm text-slate-500">
         Wrong address?{" "}

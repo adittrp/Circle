@@ -273,6 +273,7 @@ export type Database = {
           left_at: string | null
           member_role: string
           profile_id: string
+          status: string
         }
         Insert: {
           circle_id: string
@@ -281,6 +282,7 @@ export type Database = {
           left_at?: string | null
           member_role?: string
           profile_id: string
+          status?: string
         }
         Update: {
           circle_id?: string
@@ -289,6 +291,7 @@ export type Database = {
           left_at?: string | null
           member_role?: string
           profile_id?: string
+          status?: string
         }
         Relationships: [
           {
@@ -320,30 +323,42 @@ export type Database = {
           completed_meetups: number
           created_at: string
           formed_at: string
+          formed_by: string | null
           id: string
           is_active: boolean
+          match_meta: Json
+          match_score: number | null
           stage: Database["public"]["Enums"]["circle_stage"]
           university_id: string
+          why_together: string[]
         }
         Insert: {
           active_member_count?: number
           completed_meetups?: number
           created_at?: string
           formed_at?: string
+          formed_by?: string | null
           id?: string
           is_active?: boolean
+          match_meta?: Json
+          match_score?: number | null
           stage?: Database["public"]["Enums"]["circle_stage"]
           university_id: string
+          why_together?: string[]
         }
         Update: {
           active_member_count?: number
           completed_meetups?: number
           created_at?: string
           formed_at?: string
+          formed_by?: string | null
           id?: string
           is_active?: boolean
+          match_meta?: Json
+          match_score?: number | null
           stage?: Database["public"]["Enums"]["circle_stage"]
           university_id?: string
+          why_together?: string[]
         }
         Relationships: [
           {
@@ -1167,7 +1182,59 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      get_matching_pool: {
+        Args: { include_synthetic?: boolean }
+        Returns: {
+          profile_id: string
+          first_name: string | null
+          last_name: string | null
+          avatar_url: string | null
+          university_id: string
+          year: Database["public"]["Enums"]["year_level"] | null
+          major_id: string | null
+          major_name: string | null
+          residence_hall_id: string | null
+          residence_name: string | null
+          hometown: string | null
+          bio: string | null
+          is_synthetic: boolean
+          interest_ids: string[] | null
+          interest_names: string[] | null
+          availability: Json
+          social_energy: number | null
+          planning_style: string | null
+          sleep_schedule: string | null
+          group_size: string | null
+          weekend_style: string | null
+          looking_for: string[] | null
+        }[]
+      }
+      form_matched_circle: {
+        Args: {
+          companion_ids: string[]
+          why?: string[]
+          p_match_score?: number | null
+          p_match_meta?: Json
+        }
+        Returns: string
+      }
+      invite_student_to_circle: {
+        Args: { invitee_id: string }
+        Returns: string
+      }
+      get_my_active_circle: {
+        Args: Record<string, never>
+        Returns: {
+          circle_id: string
+          university_id: string
+          stage: Database["public"]["Enums"]["circle_stage"]
+          formed_at: string
+          why_together: string[]
+          match_score: number | null
+          match_meta: Json
+          members: Json
+        }[]
+      }
     }
     Enums: {
       activity_status: "upcoming" | "completed" | "cancelled"

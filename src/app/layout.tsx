@@ -4,6 +4,7 @@ import { IdentityGate } from "@/components/identity/IdentityGate";
 import { UniversityBrand } from "@/components/identity/UniversityBrand";
 import { DemoProvider } from "@/context/DemoContext";
 import { IdentityProvider } from "@/context/IdentityContext";
+import { RealCircleProvider } from "@/context/RealCircleContext";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -24,7 +25,11 @@ export const metadata: Metadata = {
     "Circle introduces you to a small group of students and helps turn introductions into actual friendships.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="en"
@@ -34,7 +39,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <IdentityProvider>
           <UniversityBrand>
             <IdentityGate>
-              <DemoProvider>{children}</DemoProvider>
+              <RealCircleProvider>
+                <DemoProvider>{children}</DemoProvider>
+              </RealCircleProvider>
             </IdentityGate>
           </UniversityBrand>
         </IdentityProvider>

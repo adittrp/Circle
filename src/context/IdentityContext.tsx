@@ -86,7 +86,10 @@ export function IdentityProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(!configured);
   const [snap, setSnap] = useState<IdentitySnapshot>(empty);
   const snapRef = useRef(snap);
-  snapRef.current = snap;
+
+  useEffect(() => {
+    snapRef.current = snap;
+  }, [snap]);
 
   const refresh = useCallback(async () => {
     await Promise.resolve();

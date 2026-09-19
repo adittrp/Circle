@@ -79,10 +79,10 @@ export function AuthEmailForm({ mode }: { mode: "signup" | "signin" }) {
         <p className="rounded-xl bg-orange-50 px-3 py-2 text-sm text-orange-800">{error}</p>
       ) : null}
       <Button type="submit" fullWidth size="lg" disabled={loading}>
-        {loading ? "Sending link..." : mode === "signup" ? "Send sign-in link" : "Email me a sign-in link"}
+        {loading ? "Sending link..." : "Email me a sign-in link"}
       </Button>
       <p className="text-center text-xs text-slate-500">
-        We only accept .edu addresses. We email a sign-in link — open it to continue.
+        We only accept .edu addresses. One email, one link — clicking it signs you in.
       </p>
     </form>
   );

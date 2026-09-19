@@ -4,22 +4,37 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useDemo } from "@/context/DemoContext";
+import { useIdentity } from "@/context/IdentityContext";
+import { useRealCircle } from "@/context/RealCircleContext";
 import { MATCHING_MESSAGES } from "@/lib/constants";
 
 export default function MatchingPage() {
   const router = useRouter();
+  const identity = useIdentity();
+  const real = useRealCircle();
   const { ready, user, runMatching, setPhase, startOnboarding, state } = useDemo();
   const [index, setIndex] = useState(0);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const started = useRef(false);
 
+  const isReal =
+    identity.configured && Boolean(identity.profile?.onboarding_completed_at);
+
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !identity.ready) return;
+
+    if (isReal) {
+      if (real.circle) {
+        router.replace("/circle");
+      }
+      return;
+    }
+
     if (!user) {
       startOnboarding();
       return;
     }
-    // Already have a circle from a previous run — skip rematch
     if (state.circle && state.phase === "reveal") {
       router.replace("/circle");
       return;
@@ -29,15 +44,59 @@ export default function MatchingPage() {
       return;
     }
     setPhase("matching");
-  }, [ready, user, router, setPhase, startOnboarding, state.circle, state.phase]);
+  }, [
+    ready,
+    identity.ready,
+    isReal,
+    real.circle,
+    user,
+    router,
+    setPhase,
+    startOnboarding,
+    state.circle,
+    state.phase,
+  ]);
 
   useEffect(() => {
-    if (!ready || !user || started.current) return;
-    if (state.circle) return;
+    if (!ready || !identity.ready || started.current) return;
+
+    if (isReal) {
+      if (!real.ready) return;
+      if (real.circle) return;
+      started.current = true;
+
+      let cancelled = false;
+      const run = async () => {
+        const { error: matchError } = await real.findCircle();
+        if (cancelled) return;
+        if (matchError) {
+          setError(matchError);
+          return;
+        }
+        setDone(true);
+      };
+      void run();
+
+      const timers = MATCHING_MESSAGES.map((_, i) =>
+        window.setTimeout(() => {
+          if (!cancelled) setIndex(i);
+        }, i * 750)
+      );
+      const finish = window.setTimeout(() => {
+        if (!cancelled && !error) router.push("/circle");
+      }, 4200);
+
+      return () => {
+        cancelled = true;
+        timers.forEach(clearTimeout);
+        clearTimeout(finish);
+      };
+    }
+
+    if (!user || state.circle) return;
     started.current = true;
 
     let cancelled = false;
-
     const run = async () => {
       await runMatching();
       if (!cancelled) setDone(true);
@@ -49,7 +108,6 @@ export default function MatchingPage() {
         if (!cancelled) setIndex(i);
       }, i * 750)
     );
-
     const finish = window.setTimeout(() => {
       if (!cancelled) router.push("/circle");
     }, 4200);
@@ -59,7 +117,45 @@ export default function MatchingPage() {
       timers.forEach(clearTimeout);
       clearTimeout(finish);
     };
-  }, [ready, user, runMatching, router, state.circle]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- real.findCircle is stable enough; full `real` rematches forever
+  }, [
+    ready,
+    identity.ready,
+    isReal,
+    real.ready,
+    real.circle,
+    real.findCircle,
+    user,
+    runMatching,
+    router,
+    state.circle,
+    error,
+  ]);
+
+  if (error) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-6 text-center">
+        <h1 className="font-display text-2xl font-bold text-slate-900">
+          Couldn&apos;t build your Circle yet
+        </h1>
+        <p className="mt-3 text-slate-500">{error}</p>
+        <button
+          type="button"
+          className="mt-6 text-sm font-semibold text-teal-700"
+          onClick={() => router.push("/people")}
+        >
+          Discover people on campus
+        </button>
+        <button
+          type="button"
+          className="mt-3 text-sm text-slate-500"
+          onClick={() => router.push("/home")}
+        >
+          Back home
+        </button>
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
@@ -71,7 +167,7 @@ export default function MatchingPage() {
         {[0, 1, 2, 3, 4].map((i) => (
           <motion.div
             key={i}
-            className="absolute left-1/2 top-1/2 h-4 w-4 -ml-2 -mt-2 rounded-full bg-teal-500"
+            className="absolute left-1/2 top-1/2 -ml-2 -mt-2 h-4 w-4 rounded-full bg-teal-500"
             animate={{
               x: Math.cos((i / 5) * Math.PI * 2) * 42,
               y: Math.sin((i / 5) * Math.PI * 2) * 42,

@@ -25,7 +25,26 @@ RLS helpers live in the **`private`** schema (`current_profile_id`, `current_uni
 
 Signup trigger `private.handle_new_user` requires a `.edu` email, creates a profile + preferences row, and records `profile_verifications` (`edu_email`).
 
-## Path 2 — Circles / activities (empty, ready)
+## Path 2 — Discovery & Matching (implemented)
+
+Real matching uses SECURITY DEFINER RPCs (authenticated cannot insert other members or read others' preferences):
+
+| Object / RPC | Purpose |
+| --- | --- |
+| `get_matching_pool(include_synthetic)` | Same-university eligible candidates + matching signals |
+| `form_matched_circle(companion_ids, why, score, meta)` | Persist Circle + memberships + matching_rounds row |
+| `invite_student_to_circle(invitee_id)` | Invite discovered student (status `invited`) |
+| `get_my_active_circle()` | Load caller's active Circle + visibility-aware members |
+| `circles.why_together` / `match_score` / `match_meta` / `formed_by` | Explainability + debug meta |
+| `circle_members.status` | `active` \| `invited` |
+
+Production matching excludes `is_synthetic` unless the pool is too small (or `NEXT_PUBLIC_MATCH_INCLUDE_SYNTHETIC=true` / harness). Blocks are honored when Path 4 data exists.
+
+Routes: `/people`, `/people/[id]`, `/matching` (real + demo), `/circle` reveal, `/dev/matching` harness (dev only). APIs under `/api/matching/*`.
+
+Path 3 should consume `get_my_active_circle` / `circles` + `circle_members` — do not rebuild matching.
+
+## Path 2 — Circles / activities tables (ready for Path 3)
 
 The **circle** is the persistent object, not a 1:1 match.
 
@@ -73,4 +92,5 @@ Users can insert a circle for their own university and manage their own membersh
 - Unauthenticated `/onboarding`, `/home`, `/profile` → `/signin`
 - Authenticated incomplete → `/onboarding`
 - Authenticated complete → `/home`
-- `/matching` and `/circle` stay open for the Path 2 demo
+- `/matching` and `/circle` stay open for the Path 2 demo; authenticated onboarded users use real matching
+- `/people` and `/dev/matching` require auth + completed onboarding

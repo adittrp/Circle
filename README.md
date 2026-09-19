@@ -35,7 +35,7 @@ Do not commit `.env.local`.
 4. `/home` — real users stay here even with no demo circle
 5. `/profile` to edit visibility and sign out
 
-Matching UI at `/matching` and `/circle` is still the localStorage demo.
+Matching UI at `/matching` and `/circle` supports **real Supabase matching** for onboarded users and keeps the **localStorage demo** when Supabase is off / demo onboarding is used. Discover students at `/people`.
 
 ## Scripts
 
@@ -43,13 +43,19 @@ Matching UI at `/matching` and `/circle` is still the localStorage demo.
 npm run dev
 npm run lint
 npm run typecheck
+npm run test
 npm run build
-npm run seed:campus   # needs SUPABASE_SERVICE_ROLE_KEY
-npm run seed:test     # optional synthetic students; is_synthetic = true
+npm run seed:campus              # needs SUPABASE_SERVICE_ROLE_KEY
+npm run seed:test -- 100         # optional synthetic students; is_synthetic = true
+npm run seed:test -- 1000 ut-austin
 ```
+
+Developer matching harness (local only): `/dev/matching`.
 
 ## Schema
 
 Full table map, ownership, and “do not query” notes: **[SCHEMA.md](./SCHEMA.md)**.
+
+Path 2 handoff for Path 3: consume `get_my_active_circle()`, then build chat/plans on `circles` / `circle_members` / `activities`.
 
 Generated types: `src/lib/supabase/database.types.ts`. Use `InterestRow` for catalog interests — Path 2’s demo `Interest` union lives in `src/lib/types.ts`.

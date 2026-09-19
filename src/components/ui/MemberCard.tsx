@@ -1,6 +1,5 @@
 "use client";
 
-import type { Interest } from "@/lib/types";
 import { Avatar } from "./Avatar";
 
 interface MemberCardProps {
@@ -9,7 +8,7 @@ interface MemberCardProps {
   major: string;
   year: string;
   dorm: string;
-  interests: Interest[];
+  interests: string[];
   isYou?: boolean;
   compact?: boolean;
 }

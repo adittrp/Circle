@@ -10,7 +10,7 @@ export default function SignUpPage() {
       <Wordmark />
       <h1 className="font-display mt-10 text-4xl font-bold">Create your Circle</h1>
       <p className="mt-2 text-slate-500">
-        Start with your school email. We&apos;ll send a sign-in link — no password to forget.
+        Start with your school email. We&apos;ll send one link — clicking it creates your account and signs you in.
       </p>
       <div className="card-surface mt-8 p-6">
         <AuthEmailForm mode="signup" />

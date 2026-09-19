@@ -20,6 +20,7 @@ import { ProgressBar } from "@/components/ui/Progress";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { useDemo } from "@/context/DemoContext";
 import { useIdentity } from "@/context/IdentityContext";
+import { useRealCircle } from "@/context/RealCircleContext";
 import { computeCircleStrength, STAGE_FLOW } from "@/lib/circleStrength";
 import { DEMO_USER_ID } from "@/lib/constants";
 import type { Activity, ActivityMood, FeedbackEmoji, HangAgain } from "@/lib/types";
@@ -43,6 +44,7 @@ function greeting() {
 export default function HomePage() {
   const router = useRouter();
   const identity = useIdentity();
+  const real = useRealCircle();
   const {
     ready,
     state,
@@ -113,18 +115,53 @@ export default function HomePage() {
     );
   }
 
-  if (identity.configured && identity.profile && !state.circle) {
+  if (identity.configured && identity.profile?.onboarding_completed_at) {
+    if (!real.ready) {
+      return (
+        <main className="flex min-h-screen items-center justify-center text-slate-500">
+          Loading your Circle...
+        </main>
+      );
+    }
+    const hasRealCircle = Boolean(real.circle);
     return (
       <main className="mx-auto max-w-3xl px-5 py-6 sm:px-8">
         <AppHeader />
         <p className="text-sm text-slate-500">{greeting()},</p>
         <h1 className="font-display text-3xl font-bold text-slate-900">{firstName}.</h1>
-        <section className="card-surface mt-8 p-6">
-          <h2 className="font-display text-xl font-bold">Your Circle</h2>
-          <p className="mt-2 text-slate-600">
-            You&apos;re in. Matching will place you with a small group — that work lives in Path 2.
-          </p>
-        </section>
+
+        {hasRealCircle && real.circle ? (
+          <section className="card-surface mt-8 p-6">
+            <h2 className="font-display text-xl font-bold">Your Circle</h2>
+            <p className="mt-2 text-slate-600">
+              You&apos;re in a group of {real.circle.members.length}. Path 3 will own chat and hangouts —
+              for now, revisit your reveal or discover more people.
+            </p>
+            {real.circle.whyTogether[0] ? (
+              <p className="mt-3 text-sm text-slate-500">{real.circle.whyTogether[0]}</p>
+            ) : null}
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <Button onClick={() => router.push("/circle")}>Meet your Circle</Button>
+              <Button variant="secondary" onClick={() => router.push("/people")}>
+                Discover people
+              </Button>
+            </div>
+          </section>
+        ) : (
+          <section className="card-surface mt-8 p-6">
+            <h2 className="font-display text-xl font-bold">Find My Circle</h2>
+            <p className="mt-2 text-slate-600">
+              We&apos;ll build a small group from students at your university using shared interests,
+              schedules, and group chemistry — not endless swiping.
+            </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <Button onClick={() => router.push("/matching")}>Find My Circle</Button>
+              <Button variant="secondary" onClick={() => router.push("/people")}>
+                Browse people
+              </Button>
+            </div>
+          </section>
+        )}
       </main>
     );
   }

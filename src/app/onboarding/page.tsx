@@ -115,36 +115,41 @@ export default function OnboardingPage() {
     if (!identity.ready || !identity.profile || hydrated) return;
     const profile = identity.profile;
     const uni = profile.university_id ?? inferred?.id ?? "";
-    setBasics({
+    const nextBasics: BasicsDraft = {
       first_name: profile.first_name ?? "",
       last_name: profile.last_name ?? "",
-      year: profile.year ?? "",
+      year: (profile.year ?? "") as BasicsDraft["year"],
       hometown: profile.hometown ?? "",
       bio: profile.bio ?? "",
-    });
-    setCampus({
+    };
+    const nextCampus = {
       university_id: uni,
       major_id: profile.major_id ?? "",
       minor: profile.minor ?? "",
       residence_hall_id: profile.residence_hall_id ?? "",
-    });
-    setInterestIds(identity.selectedInterestIds);
-    setSlots(
-      identity.availability.map((s) => ({
-        weekday: s.weekday,
-        time_window: s.time_window,
-      }))
-    );
-    setVibe({
+    };
+    const nextInterests = identity.selectedInterestIds;
+    const nextSlots = identity.availability.map((s) => ({
+      weekday: s.weekday,
+      time_window: s.time_window,
+    }));
+    const nextVibe = {
       social_energy: identity.preferences?.social_energy ?? 55,
       spontaneous_vs_planned: identity.preferences?.spontaneous_vs_planned ?? 50,
       sleep_schedule: identity.preferences?.sleep_schedule ?? "",
       group_size: identity.preferences?.group_size ?? "",
       planning_style: identity.preferences?.planning_style ?? "",
       weekend_style: identity.preferences?.weekend_style ?? "",
+    };
+    queueMicrotask(() => {
+      setBasics(nextBasics);
+      setCampus(nextCampus);
+      setInterestIds(nextInterests);
+      setSlots(nextSlots);
+      setVibe(nextVibe);
+      setHydrated(true);
     });
     if (uni) void loadCampusCatalog(uni);
-    setHydrated(true);
   }, [
     identity.ready,
     identity.profile,
@@ -158,8 +163,11 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (!hydrated || campus.university_id || !inferred?.id) return;
-    setCampus((d) => ({ ...d, university_id: inferred.id }));
-    void loadCampusCatalog(inferred.id);
+    const uni = inferred.id;
+    queueMicrotask(() => {
+      setCampus((d) => ({ ...d, university_id: uni }));
+    });
+    void loadCampusCatalog(uni);
   }, [hydrated, campus.university_id, inferred?.id, loadCampusCatalog]);
 
   const answered =
