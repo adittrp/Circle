@@ -1,12 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Users, CalendarHeart } from "lucide-react";
+import { ArrowRight, CalendarHeart, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Wordmark } from "@/components/brand/Wordmark";
 import { Button } from "@/components/ui/Button";
-import { useDemo } from "@/context/DemoContext";
+import { useIdentity } from "@/context/IdentityContext";
 
 const steps = [
   {
@@ -27,43 +26,23 @@ const steps = [
 ];
 
 export default function LandingPage() {
-  const router = useRouter();
-  const { ready, state, startOnboarding, resetDemo } = useDemo();
-
-  useEffect(() => {
-    if (!ready) return;
-    if (state.phase === "home" && state.circle) router.replace("/home");
-    if (state.phase === "reveal" && state.circle) router.replace("/circle");
-  }, [ready, state.phase, state.circle, router]);
-
-  const handleStart = () => {
-    startOnboarding();
-  };
+  const { ready, configured, user, profile } = useIdentity();
+  const onboarded = Boolean(profile?.onboarding_completed_at);
 
   return (
     <main className="relative overflow-hidden">
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-5 pb-16 pt-6 sm:px-8">
         <header className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-600 text-white font-display font-bold">
-              C
-            </div>
-            <span className="font-display text-xl font-bold tracking-tight">
-              Circle
-            </span>
-          </div>
-          {ready && state.phase !== "landing" ? (
-            <button
-              type="button"
-              onClick={() => {
-                resetDemo();
-                router.push("/");
-              }}
-              className="text-sm text-slate-500 hover:text-slate-800"
-            >
-              Reset demo
-            </button>
-          ) : null}
+          <Wordmark />
+          {ready && configured && user ? (
+            <Link href={onboarded ? "/home" : "/onboarding"} className="text-sm font-medium text-slate-600">
+              Continue
+            </Link>
+          ) : (
+            <Link href="/signin" className="text-sm font-medium text-slate-600">
+              Sign in
+            </Link>
+          )}
         </header>
 
         <section className="flex flex-1 flex-col justify-center py-12 sm:py-16">
@@ -85,44 +64,14 @@ export default function LandingPage() {
               introductions into actual friendships.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Link href="/onboarding" onClick={handleStart}>
+              <Link href="/signup">
                 <Button size="lg">
                   Find My Circle
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
-              <p className="text-sm text-slate-500 sm:ml-2">
-                Demo mode · no account required
-              </p>
+              <p className="text-sm text-slate-500 sm:ml-2">School email required · .edu</p>
             </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="mt-14 grid gap-3 sm:grid-cols-5"
-          >
-            {["Alex", "Maya", "Jordan", "Sam", "Quinn"].map((name, i) => (
-              <div
-                key={name}
-                className="card-surface flex items-center gap-3 p-3"
-                style={{ transform: `translateY(${i % 2 === 0 ? 0 : 10}px)` }}
-              >
-                <div
-                  className="flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold text-white"
-                  style={{
-                    background: `linear-gradient(135deg, hsl(${160 + i * 28}, 65%, 45%), hsl(${190 + i * 20}, 70%, 55%))`,
-                  }}
-                >
-                  {name[0]}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold">{name}</p>
-                  <p className="text-xs text-slate-500">Your Circle</p>
-                </div>
-              </div>
-            ))}
           </motion.div>
         </section>
 

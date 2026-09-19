@@ -28,7 +28,7 @@ export default function CircleRevealPage() {
   useEffect(() => {
     if (!ready) return;
     if (!state.circle) {
-      router.replace("/onboarding");
+      router.replace("/matching");
       return;
     }
     const t = window.setTimeout(() => setShowMission(true), 1600);

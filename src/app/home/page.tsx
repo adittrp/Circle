@@ -17,7 +17,9 @@ import { Chip } from "@/components/ui/Chip";
 import { MemberCard } from "@/components/ui/MemberCard";
 import { Modal } from "@/components/ui/Modal";
 import { ProgressBar } from "@/components/ui/Progress";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { useDemo } from "@/context/DemoContext";
+import { useIdentity } from "@/context/IdentityContext";
 import { computeCircleStrength, STAGE_FLOW } from "@/lib/circleStrength";
 import { DEMO_USER_ID } from "@/lib/constants";
 import type { Activity, ActivityMood, FeedbackEmoji, HangAgain } from "@/lib/types";
@@ -40,6 +42,7 @@ function greeting() {
 
 export default function HomePage() {
   const router = useRouter();
+  const identity = useIdentity();
   const {
     ready,
     state,
@@ -92,13 +95,41 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!ready) return;
+    if (identity.configured && identity.profile?.onboarding_completed_at) return;
     if (!state.circle || state.phase !== "home") {
       if (state.phase === "reveal") router.replace("/circle");
-      else if (!state.circle) router.replace("/");
+      else if (!state.circle && !identity.configured) router.replace("/");
     }
-  }, [ready, state.circle, state.phase, router]);
+  }, [ready, state.circle, state.phase, router, identity.configured, identity.profile]);
 
-  if (!ready || !user || !state.circle || !strength) {
+  const firstName =
+    identity.profile?.first_name || user?.profile.firstName || "there";
+
+  if (!ready || !identity.ready) {
+    return (
+      <main className="flex min-h-screen items-center justify-center text-slate-500">
+        Loading your Circle...
+      </main>
+    );
+  }
+
+  if (identity.configured && identity.profile && !state.circle) {
+    return (
+      <main className="mx-auto max-w-3xl px-5 py-6 sm:px-8">
+        <AppHeader />
+        <p className="text-sm text-slate-500">{greeting()},</p>
+        <h1 className="font-display text-3xl font-bold text-slate-900">{firstName}.</h1>
+        <section className="card-surface mt-8 p-6">
+          <h2 className="font-display text-xl font-bold">Your Circle</h2>
+          <p className="mt-2 text-slate-600">
+            You&apos;re in. Matching will place you with a small group — that work lives in Path 2.
+          </p>
+        </section>
+      </main>
+    );
+  }
+
+  if (!user || !state.circle || !strength) {
     return (
       <main className="flex min-h-screen items-center justify-center text-slate-500">
         Loading your Circle...
@@ -121,7 +152,7 @@ export default function HomePage() {
         <div>
           <p className="text-sm text-slate-500">{greeting()},</p>
           <h1 className="font-display text-3xl font-bold text-slate-900">
-            {user.profile.firstName || "Alex"}.
+            {firstName}.
           </h1>
         </div>
         <button

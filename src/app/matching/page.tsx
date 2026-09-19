@@ -8,7 +8,7 @@ import { MATCHING_MESSAGES } from "@/lib/constants";
 
 export default function MatchingPage() {
   const router = useRouter();
-  const { ready, user, runMatching, setPhase, state } = useDemo();
+  const { ready, user, runMatching, setPhase, startOnboarding, state } = useDemo();
   const [index, setIndex] = useState(0);
   const [done, setDone] = useState(false);
   const started = useRef(false);
@@ -16,7 +16,7 @@ export default function MatchingPage() {
   useEffect(() => {
     if (!ready) return;
     if (!user) {
-      router.replace("/onboarding");
+      startOnboarding();
       return;
     }
     // Already have a circle from a previous run — skip rematch
@@ -29,7 +29,7 @@ export default function MatchingPage() {
       return;
     }
     setPhase("matching");
-  }, [ready, user, router, setPhase, state.circle, state.phase]);
+  }, [ready, user, router, setPhase, startOnboarding, state.circle, state.phase]);
 
   useEffect(() => {
     if (!ready || !user || started.current) return;

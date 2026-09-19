@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { IdentityGate } from "@/components/identity/IdentityGate";
+import { UniversityBrand } from "@/components/identity/UniversityBrand";
 import { DemoProvider } from "@/context/DemoContext";
+import { IdentityProvider } from "@/context/IdentityContext";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -28,7 +31,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${outfit.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <DemoProvider>{children}</DemoProvider>
+        <IdentityProvider>
+          <UniversityBrand>
+            <IdentityGate>
+              <DemoProvider>{children}</DemoProvider>
+            </IdentityGate>
+          </UniversityBrand>
+        </IdentityProvider>
       </body>
     </html>
   );

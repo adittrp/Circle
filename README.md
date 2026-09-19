@@ -2,55 +2,54 @@
 
 College friendships that actually happen.
 
-Circle places students into small groups (~5) and acts as an **AI social coordinator** — matching for group chemistry, finding mutual availability, and suggesting real-world plans until the group no longer needs the app.
+Circle places students into small groups and helps turn introductions into actual plans. This repo currently owns **Path 1** (identity, `.edu` auth, campus catalog, onboarding). Paths 2–4 have empty-but-ready tables — see [SCHEMA.md](./SCHEMA.md).
 
 ## Quick start
 
 ```bash
 npm install
+cp .env.example .env.local   # then fill keys
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-No API keys or Supabase required — **demo mode** runs fully offline with seed data and deterministic AI fallbacks.
+Without Supabase env vars, **demo matching** still runs offline (`/matching`, `/circle`) so Path 2 is not blocked.
 
-## Demo flow (~90 seconds)
+## Environment
 
-1. Landing → **Find My Circle**
-2. Onboarding (profile → vibe check → availability)
-3. Matching animation
-4. Circle reveal + **Why this Circle?**
-5. **First Mission** RSVP
-6. Home dashboard → **I want to do something**
-7. Circle Strength + optional feedback after marking a plan done
-8. Settings → **Reset demo** to restart for judges
+| Variable | Where | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | browser + server | Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | browser + server | Legacy anon JWT (publishable key also works) |
+| `NEXT_PUBLIC_SITE_URL` | browser | Auth email redirect origin (`http://localhost:3000` locally) |
+| `SUPABASE_SERVICE_ROLE_KEY` | server seed scripts only | `npm run seed:campus` / `seed:test`. Never expose to the client |
 
-## Architecture
+Do not commit `.env.local`.
 
+## Path 1 flow
+
+1. Landing → **Find My Circle** (`/signup`)
+2. School email (must end in `.edu`) → magic link / OTP
+3. `/verify` → `/onboarding` (basics, university, interests, availability, optional vibe)
+4. `/home` — real users stay here even with no demo circle
+5. `/profile` to edit visibility and sign out
+
+Matching UI at `/matching` and `/circle` is still the localStorage demo.
+
+## Scripts
+
+```bash
+npm run dev
+npm run lint
+npm run typecheck
+npm run build
+npm run seed:campus   # needs SUPABASE_SERVICE_ROLE_KEY
+npm run seed:test     # optional synthetic students; is_synthetic = true
 ```
-src/
-  app/           # Routes: /, /onboarding, /matching, /circle, /home
-  components/    # UI + feature components
-  context/       # DemoProvider (localStorage persistence)
-  data/          # ~60 synthetic UT Austin students
-  lib/
-    matching/    # Group compatibility + balance algorithm
-    ai/          # SocialCoordinator (swappable provider)
-    types.ts     # Shared domain types
-    storage.ts   # Demo persistence
-```
 
-### Key modules
+## Schema
 
-- **`matchCircle`** — optimizes *group* score (interests, schedule, proximity, social fit, year) plus planning-style balance
-- **`SocialCoordinator`** — generates First Mission + spontaneous plans; `MockSocialCoordinator` by default; swap via `setSocialCoordinator`
-- **Demo store** — all important state persists in `localStorage` (`circle-demo-v1`)
+Full table map, ownership, and “do not query” notes: **[SCHEMA.md](./SCHEMA.md)**.
 
-## Resetting the demo
-
-Use **Settings → Reset demo** on the home screen, or the **Reset demo** link on the landing page when mid-flow.
-
-## Tech
-
-Next.js · React · TypeScript · Tailwind CSS · Framer Motion · Lucide
+Generated types: `src/lib/supabase/database.types.ts`. Use `InterestRow` for catalog interests — Path 2’s demo `Interest` union lives in `src/lib/types.ts`.
