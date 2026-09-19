@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { ProgressBar, StepDots } from "@/components/ui/Progress";
 import { useIdentity } from "@/context/IdentityContext";
+import { useTrust } from "@/context/TrustContext";
+import { CODE_OF_CONDUCT } from "@/lib/trust/core";
 import {
   AVAILABILITY_WINDOWS,
   INTEREST_CATEGORIES,
@@ -56,7 +58,9 @@ type VibeDraft = {
 export default function OnboardingPage() {
   const router = useRouter();
   const identity = useIdentity();
+  const trust = useTrust();
   const [step, setStep] = useState(0);
+  const [agreed, setAgreed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -194,9 +198,11 @@ export default function OnboardingPage() {
           ? interestsOk
           : step === 3
             ? availabilityOk
-            : true;
+            : step === 4
+              ? agreed || trust.acknowledged
+              : true;
 
-  const persistStep = async (current: number) => {
+  const persistStep = async (current: number): Promise<{ error: string | null }> => {
     if (current === 0) {
       return saveProfile({
         first_name: basics.first_name.trim(),
@@ -220,6 +226,10 @@ export default function OnboardingPage() {
     if (current === 3) {
       return identity.saveAvailability(slots);
     }
+    if (current === 4) {
+      const message = await trust.acknowledgeConduct();
+      return { error: message };
+    }
     return { error: null };
   };
 
@@ -230,6 +240,12 @@ export default function OnboardingPage() {
     if (stepError.error) {
       setSaving(false);
       setError(stepError.error);
+      return;
+    }
+    const rulesError = await persistStep(4);
+    if (rulesError.error) {
+      setSaving(false);
+      setError(rulesError.error);
       return;
     }
     if (withVibe) {
@@ -258,7 +274,7 @@ export default function OnboardingPage() {
   };
 
   const next = async () => {
-    if (step < 4) {
+    if (step < 5) {
       setSaving(true);
       setError(null);
       const { error: stepError } = await persistStep(step);
@@ -301,9 +317,9 @@ export default function OnboardingPage() {
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
         <Wordmark compact href="/home" />
-        <StepDots step={Math.min(step, 3)} total={4} />
+        <StepDots step={Math.min(step, 5)} total={6} />
       </div>
-      <ProgressBar value={((Math.min(step, 4) + 1) / 5) * 100} />
+      <ProgressBar value={((Math.min(step, 5) + 1) / 6) * 100} />
 
       <div className="mt-8 flex-1">
         <AnimatePresence mode="wait">
@@ -515,6 +531,33 @@ export default function OnboardingPage() {
           ) : null}
 
           {step === 4 ? (
+            <motion.div key="rules" {...pane} className="space-y-5">
+              <Header
+                kicker="Community"
+                title={CODE_OF_CONDUCT.title}
+                body={CODE_OF_CONDUCT.intro}
+              />
+              <ul className="space-y-3">
+                {CODE_OF_CONDUCT.items.map((item) => (
+                  <li key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <p className="font-semibold">{item.title}</p>
+                    <p className="mt-1 text-sm text-slate-500">{item.body}</p>
+                  </li>
+                ))}
+              </ul>
+              <label className="flex items-start gap-3 rounded-2xl bg-teal-50 p-4 text-sm text-teal-950">
+                <input
+                  type="checkbox"
+                  className="mt-1 accent-teal-700"
+                  checked={agreed || trust.acknowledged}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                />
+                <span>I understand these rules and will follow them in Circle.</span>
+              </label>
+            </motion.div>
+          ) : null}
+
+          {step === 5 ? (
             <motion.div key="vibe" {...pane} className="space-y-6">
               <Header
                 kicker="Optional vibe check"
@@ -629,7 +672,7 @@ export default function OnboardingPage() {
       {error ? <p className="mt-4 text-sm text-orange-700">{error}</p> : null}
 
       <div className="sticky bottom-0 mt-8 space-y-2 border-t border-slate-100 bg-[#f4f7fb]/90 py-4 backdrop-blur">
-        {step === 4 ? (
+        {step === 5 ? (
           <Button
             fullWidth
             variant="secondary"
@@ -640,7 +683,7 @@ export default function OnboardingPage() {
           </Button>
         ) : null}
         <Button fullWidth size="lg" disabled={!canContinue || saving} onClick={() => void next()}>
-          {step === 4 ? "Finish and go home" : "Continue"}
+          {step === 5 ? "Finish and go home" : "Continue"}
           <ArrowRight className="h-5 w-5" />
         </Button>
       </div>

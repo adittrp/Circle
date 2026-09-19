@@ -15,6 +15,10 @@ import { computeCircleStage } from "@/lib/circleStrength";
 import { DEMO_USER_ID } from "@/lib/constants";
 import { matchCircle } from "@/lib/matching/algorithm";
 import { generateWhyThisCircle } from "@/lib/matching/whyCircle";
+import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { filterMatchCandidates } from "@/lib/trust/matching";
+import { useTrust } from "@/context/TrustContext";
 import {
   createEmptyUser,
   createInitialState,
@@ -62,6 +66,7 @@ interface DemoContextValue {
   ) => void;
   completeActivity: (activityId: string) => void;
   requestReshuffle: () => void;
+  leaveDemoCircle: () => void;
   pushExtensionEvent: (payload: Omit<ExtensionPayload, "id" | "receivedAt">) => void;
   clearExtensionInbox: () => void;
 }
@@ -115,6 +120,7 @@ function simulateMemberRsvps(
 }
 
 export function DemoProvider({ children }: { children: ReactNode }) {
+  const trust = useTrust();
   const [state, setState] = useState<DemoState>(createInitialState);
   const [ready, setReady] = useState(false);
 
@@ -190,12 +196,23 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
   const runMatching = useCallback(async () => {
     const user = state.user ?? createEmptyUser();
-    const matched = matchCircle(user, SEED_STUDENTS, 4);
+    const excluded = new Set([...trust.demoBlockedIds, ...trust.blocks.map((b) => b.blocked_id)]);
+    let pool = SEED_STUDENTS.filter((s) => !excluded.has(s.id));
+    if (isSupabaseConfigured()) {
+      const allowed = await filterMatchCandidates(
+        createClient(),
+        pool.map((s) => s.id)
+      );
+      const allowedSet = new Set(allowed);
+      pool = pool.filter((s) => allowedSet.has(s.id));
+    }
+    const matched = matchCircle(user, pool, 4, { excludedIds: excluded });
     const why = generateWhyThisCircle(user, matched);
     const coordinator = getSocialCoordinator();
     const suggestion = await coordinator.generateFirstMission({
       user,
       members: matched,
+      safety: { firstMeet: true, rules: trust.circleRules },
     });
 
     const memberIds = [DEMO_USER_ID, ...matched.map((m) => m.id)];
@@ -221,6 +238,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       members: matched,
       mood: "Active",
       previousActivities: [firstMission],
+      safety: { firstMeet: false, rules: trust.circleRules },
     });
 
     const nextPlan: Activity = {
@@ -261,7 +279,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       reshuffleRequested: false,
       extensionInbox: [],
     }));
-  }, [persist, state.user, state.version]);
+  }, [persist, state.user, state.version, trust.blocks, trust.circleRules, trust.demoBlockedIds]);
 
   const setPhase = useCallback(
     (phase: DemoState["phase"]) => {
@@ -274,6 +292,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     (activityId: string, status: Exclude<RsvpStatus, "pending">) => {
       persist((prev) => {
         if (!prev.circle) return prev;
+        const previous = prev.activities.find((a) => a.id === activityId);
+        const wasIn = previous?.rsvps[DEMO_USER_ID] === "in";
+        if (status === "in") void trust.recordKarma("rsvp_accepted", `accepted:${activityId}`);
+        if (status === "cant" && wasIn) {
+          void trust.recordKarma("late_cancellation", `late:${activityId}`);
+        }
         const activities = prev.activities.map((a) => {
           if (a.id !== activityId) return a;
           const nextRsvps: Record<string, RsvpStatus> = {
@@ -293,7 +317,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         return { ...prev, activities };
       });
     },
-    [persist]
+    [persist, trust]
   );
 
   const goHome = useCallback(() => {
@@ -313,6 +337,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         spontaneous: true,
         previousActivities: state.activities,
         feedback: state.feedback,
+        safety: {
+          firstMeet: (state.circle?.completedMeetups ?? 0) === 0,
+          rules: trust.circleRules,
+        },
       });
 
       const memberIds = state.circle!.memberIds;
@@ -342,7 +370,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       };
       return activity;
     },
-    [state.activities, state.circle, state.feedback, state.user]
+    [state.activities, state.circle, state.feedback, state.user, trust.circleRules]
   );
 
   const startPlan = useCallback(
@@ -362,6 +390,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           a.id === activityId ? { ...a, status: "completed" as const } : a
         );
         const completedCount = activities.filter((a) => a.status === "completed").length;
+        void trust.recordKarma("rsvp_kept", `attended:${activityId}`);
         return {
           ...prev,
           activities,
@@ -376,7 +405,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         };
       });
     },
-    [persist]
+    [persist, trust]
   );
 
   const submitFeedback = useCallback(
@@ -398,6 +427,18 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
   const requestReshuffle = useCallback(() => {
     persist((prev) => ({ ...prev, reshuffleRequested: true }));
+  }, [persist]);
+
+  const leaveDemoCircle = useCallback(() => {
+    persist((prev) => ({
+      ...prev,
+      circle: null,
+      activities: [],
+      feedback: [],
+      pendingFeedbackActivityId: null,
+      phase: "home",
+      reshuffleRequested: false,
+    }));
   }, [persist]);
 
   const pushExtensionEvent = useCallback(
@@ -423,8 +464,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
   const circleMembers = useMemo(() => {
     if (!state.circle) return [];
-    return SEED_STUDENTS.filter((s) => state.circle!.memberIds.includes(s.id));
-  }, [state.circle]);
+    return SEED_STUDENTS.filter(
+      (s) =>
+        state.circle!.memberIds.includes(s.id) &&
+        !trust.demoBlockedIds.includes(s.id) &&
+        !trust.blocks.some((b) => b.blocked_id === s.id)
+    );
+  }, [state.circle, trust.blocks, trust.demoBlockedIds]);
 
   const displayMembers = useMemo(() => {
     if (!state.user || !state.circle) return [];
@@ -452,6 +498,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     submitFeedback,
     completeActivity,
     requestReshuffle,
+    leaveDemoCircle,
     pushExtensionEvent,
     clearExtensionInbox,
   };

@@ -2,7 +2,14 @@
 
 College friendships that actually happen.
 
-Circle places students into small groups and helps turn introductions into actual plans. This repo currently owns **Path 1** (identity, `.edu` auth, campus catalog, onboarding). Paths 2–4 have empty-but-ready tables — see [SCHEMA.md](./SCHEMA.md).
+Circle places students into small groups and helps turn introductions into actual plans.
+
+- **Path 1** — identity, `.edu` auth, campus catalog, onboarding
+- **Path 2** — matching / Circles (demo matching still runs offline)
+- **Path 3** — communities / social
+- **Path 4** — Trust & Safety: private Circle Karma, blocks, reports, Code of Conduct, Circle rules, `/trust`
+
+See [SCHEMA.md](./SCHEMA.md).
 
 ## Quick start
 
@@ -31,9 +38,10 @@ Do not commit `.env.local`.
 
 1. Landing → **Find My Circle** (`/signup`)
 2. School email (must end in `.edu`) → magic link / OTP
-3. `/verify` → `/onboarding` (basics, university, interests, availability, optional vibe)
+3. `/verify` → `/onboarding` (basics, university, interests, availability, Code of Conduct, optional vibe)
 4. `/home` — real users stay here even with no demo circle
 5. `/profile` to edit visibility and sign out
+6. `/trust` — private Karma, reliability, verification, blocks, community rules
 
 Matching UI at `/matching` and `/circle` is still the localStorage demo.
 
@@ -44,6 +52,7 @@ npm run dev
 npm run lint
 npm run typecheck
 npm run build
+npm run test
 npm run seed:campus   # needs SUPABASE_SERVICE_ROLE_KEY
 npm run seed:test     # optional synthetic students; is_synthetic = true
 ```

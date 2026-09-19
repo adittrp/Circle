@@ -4,6 +4,7 @@ import { IdentityGate } from "@/components/identity/IdentityGate";
 import { UniversityBrand } from "@/components/identity/UniversityBrand";
 import { DemoProvider } from "@/context/DemoContext";
 import { IdentityProvider } from "@/context/IdentityContext";
+import { TrustProvider } from "@/context/TrustContext";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -34,7 +35,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <IdentityProvider>
           <UniversityBrand>
             <IdentityGate>
-              <DemoProvider>{children}</DemoProvider>
+              <TrustProvider>
+                <DemoProvider>{children}</DemoProvider>
+              </TrustProvider>
             </IdentityGate>
           </UniversityBrand>
         </IdentityProvider>

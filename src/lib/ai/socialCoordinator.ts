@@ -1,4 +1,11 @@
 import { CAMPUS_LOCATIONS } from "@/lib/constants";
+import {
+  defaultCircleRules,
+  filterActivitiesByRules,
+  pickFirstMeetLocation,
+  type ActivityConstraintTag,
+  type CircleRuleSet,
+} from "@/lib/trust/core";
 import type {
   Activity,
   ActivityFeedback,
@@ -18,6 +25,7 @@ export interface CoordinatorInput {
   feedback?: ActivityFeedback[];
   mood?: ActivityMood;
   spontaneous?: boolean;
+  safety?: { firstMeet: boolean; rules: CircleRuleSet };
 }
 
 export interface SocialCoordinator {
@@ -61,11 +69,21 @@ function slotToSchedule(slot: string): { date: string; time: string } {
   return map[slot] ?? { date: "Thursday", time: "8:00 PM" };
 }
 
-function preferredLocation(mood: ActivityMood | "First Mission", dorm: string): string {
+function preferredLocation(
+  mood: ActivityMood | "First Mission",
+  dorm: string,
+  safety?: { firstMeet: boolean; rules: CircleRuleSet }
+): string {
+  if (safety?.firstMeet) {
+    return pickFirstMeetLocation(dorm, safety.rules ?? defaultCircleRules());
+  }
   if (mood === "Active") return "Gregory Gym";
   if (mood === "Study") return "PCL";
   if (mood === "Chill") return "Texas Union";
-  if (mood === "Go Out") return "The Drag";
+  if (mood === "Go Out") {
+    if (safety?.rules.noDrinking || safety?.rules.noParties) return "South Mall Lawn";
+    return "The Drag";
+  }
   if (mood === "Food" || mood === "First Mission") {
     if (dorm.includes("Jester")) return "Jester City Limits";
     return "Texas Union";
@@ -88,6 +106,7 @@ function activityCatalog(mood: ActivityMood | "First Mission"): Array<{
   emoji: string;
   description: string;
   duration: string;
+  tags: ActivityConstraintTag[];
 }> {
   switch (mood) {
     case "First Mission":
@@ -98,18 +117,28 @@ function activityCatalog(mood: ActivityMood | "First Mission"): Array<{
           emoji: "🌮",
           description: "A low-key food run to break the ice — no agenda, just good tacos.",
           duration: "60–90 min",
+          tags: ["campus_public", "food", "low_cost"],
         },
         {
           title: "Late Night Food Run",
           emoji: "🍔",
           description: "Grab something greasy and walk it off around campus.",
           duration: "45–60 min",
+          tags: ["campus_public", "food", "low_cost", "late_night"],
         },
         {
           title: "Coffee Catch-up",
           emoji: "☕",
           description: "Easy conversation fuel near campus.",
           duration: "45 min",
+          tags: ["campus_public", "food", "low_cost"],
+        },
+        {
+          title: "Go to a bar",
+          emoji: "🍻",
+          description: "Grab a drink off campus.",
+          duration: "2 hrs",
+          tags: ["drinking", "bar", "late_night"],
         },
       ];
     case "Active":
@@ -119,18 +148,21 @@ function activityCatalog(mood: ActivityMood | "First Mission"): Array<{
           emoji: "🏀",
           description: "Pickup hoops — show up, shoot around, no pressure.",
           duration: "60–90 min",
+          tags: ["campus_public", "active", "low_cost"],
         },
         {
           title: "Gym Session",
           emoji: "💪",
           description: "Lift or cardio together at Gregory.",
           duration: "60 min",
+          tags: ["campus_public", "active", "low_cost"],
         },
         {
           title: "South Mall Walk",
           emoji: "🚶",
           description: "Stretch your legs and talk between classes energy.",
           duration: "30–45 min",
+          tags: ["campus_public", "active", "low_cost"],
         },
       ];
     case "Chill":
@@ -140,12 +172,14 @@ function activityCatalog(mood: ActivityMood | "First Mission"): Array<{
           emoji: "🎮",
           description: "Low-key games and hanging out at the Union.",
           duration: "90 min",
+          tags: ["campus_public", "chill", "low_cost"],
         },
         {
           title: "Movie Night Setup",
           emoji: "🎬",
           description: "Pick a film and claim a cozy corner.",
           duration: "2 hrs",
+          tags: ["campus_public", "chill", "low_cost"],
         },
       ];
     case "Study":
@@ -155,12 +189,14 @@ function activityCatalog(mood: ActivityMood | "First Mission"): Array<{
           emoji: "📚",
           description: "Co-working with optional snack break halfway.",
           duration: "90 min",
+          tags: ["campus_public", "study", "low_cost"],
         },
         {
           title: "Quiet Focus Hour",
           emoji: "✏️",
           description: "Headphones in, check-in after sixty minutes.",
           duration: "60 min",
+          tags: ["campus_public", "study", "low_cost"],
         },
       ];
     case "Go Out":
@@ -170,12 +206,21 @@ function activityCatalog(mood: ActivityMood | "First Mission"): Array<{
           emoji: "🎉",
           description: "Wander Guadalupe, people-watch, grab a treat.",
           duration: "90 min",
+          tags: ["campus_public", "low_cost"],
         },
         {
           title: "Campus Concert Check",
           emoji: "🎵",
           description: "See what's happening and decide together.",
           duration: "2 hrs",
+          tags: ["campus_public", "low_cost"],
+        },
+        {
+          title: "House party",
+          emoji: "🪩",
+          description: "A private party off campus.",
+          duration: "3 hrs",
+          tags: ["party", "private_residence", "late_night", "drinking"],
         },
       ];
     case "Surprise Me":
@@ -186,6 +231,7 @@ function activityCatalog(mood: ActivityMood | "First Mission"): Array<{
           emoji: "🎲",
           description: "A spontaneous plan based on who's free right now.",
           duration: "60 min",
+          tags: ["campus_public", "low_cost"],
         },
       ];
   }
@@ -203,11 +249,25 @@ function positiveMoods(feedback: ActivityFeedback[] = []): Set<string> {
   );
 }
 
+function applySafety<T extends { title: string; tags: ActivityConstraintTag[] }>(
+  catalog: T[],
+  safety?: { firstMeet: boolean; rules: CircleRuleSet }
+): T[] {
+  const rules = safety?.rules ?? defaultCircleRules();
+  const constrained = safety?.firstMeet ? { ...rules, publicCampusOnly: true } : rules;
+  const filtered = filterActivitiesByRules(catalog, constrained);
+  return filtered.length > 0 ? filtered : catalog.filter((c) => c.tags.includes("campus_public"));
+}
+
 export class MockSocialCoordinator implements SocialCoordinator {
   async generateFirstMission(input: CoordinatorInput): Promise<SuggestedActivity> {
     const slot = bestSharedSlot(input.user, input.members);
     const schedule = slotToSchedule(slot);
-    const catalog = activityCatalog("First Mission");
+    const safety = {
+      firstMeet: true,
+      rules: input.safety?.rules ?? defaultCircleRules(),
+    };
+    const catalog = applySafety(activityCatalog("First Mission"), safety);
     const pick = catalog[0];
 
     let exploreFood = 0;
@@ -230,7 +290,10 @@ export class MockSocialCoordinator implements SocialCoordinator {
       title: pick.title,
       emoji: pick.emoji,
       description: pick.description,
-      location: preferredLocation("First Mission", input.user.profile.dorm || "Jester West"),
+      location: preferredLocation("First Mission", input.user.profile.dorm || "Jester West", {
+        firstMeet: true,
+        rules: input.safety?.rules ?? defaultCircleRules(),
+      }),
       date: schedule.date,
       time: schedule.time,
       reason,
@@ -246,7 +309,10 @@ export class MockSocialCoordinator implements SocialCoordinator {
         ? input.mood
         : moodFromInterests(shared.length ? shared : input.user.vibe.interests);
 
-    const catalog = activityCatalog(mood === "Surprise Me" ? "Food" : mood);
+    const catalog = applySafety(
+      activityCatalog(mood === "Surprise Me" ? "Food" : mood),
+      input.safety
+    );
     const seed = hashSeed(
       [
         input.user.id,
@@ -286,7 +352,7 @@ export class MockSocialCoordinator implements SocialCoordinator {
       title: pick.title,
       emoji: pick.emoji,
       description: pick.description,
-      location: preferredLocation(mood, input.user.profile.dorm || "Jester West"),
+      location: preferredLocation(mood, input.user.profile.dorm || "Jester West", input.safety),
       date: schedule.date,
       time: schedule.time,
       reason,

@@ -92,6 +92,87 @@ export type Database = {
             foreignKeyName: "activities_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "activities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_attendance: {
+        Row: {
+          activity_id: string
+          created_at: string
+          marked_by: string
+          profile_id: string
+          status: Database["public"]["Enums"]["attendance_status"]
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          marked_by: string
+          profile_id: string
+          status: Database["public"]["Enums"]["attendance_status"]
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          marked_by?: string
+          profile_id?: string
+          status?: Database["public"]["Enums"]["attendance_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_attendance_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_attendance_marked_by_fkey"
+            columns: ["marked_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_attendance_marked_by_fkey"
+            columns: ["marked_by"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "activity_attendance_marked_by_fkey"
+            columns: ["marked_by"]
+            isOneToOne: false
+            referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_attendance_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_attendance_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "activity_attendance_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -133,6 +214,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feedback_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "activity_feedback_profile_id_fkey"
@@ -181,6 +269,13 @@ export type Database = {
             foreignKeyName: "activity_rsvps_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "activity_rsvps_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -214,6 +309,13 @@ export type Database = {
             foreignKeyName: "blocks_blocked_id_fkey"
             columns: ["blocked_id"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -223,6 +325,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "blocks_blocker_id_fkey"
@@ -261,6 +370,62 @@ export type Database = {
             columns: ["university_id"]
             isOneToOne: false
             referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      circle_leave_feedback: {
+        Row: {
+          circle_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          profile_id: string
+          reason: Database["public"]["Enums"]["circle_leave_reason"]
+        }
+        Insert: {
+          circle_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          profile_id: string
+          reason: Database["public"]["Enums"]["circle_leave_reason"]
+        }
+        Update: {
+          circle_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          profile_id?: string
+          reason?: Database["public"]["Enums"]["circle_leave_reason"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_leave_feedback_circle_id_fkey"
+            columns: ["circle_id"]
+            isOneToOne: false
+            referencedRelation: "circles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_leave_feedback_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_leave_feedback_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "circle_leave_feedback_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
         ]
@@ -308,6 +473,93 @@ export type Database = {
           {
             foreignKeyName: "circle_members_profile_id_fkey"
             columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "circle_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      circle_rules: {
+        Row: {
+          accessibility_needed: boolean
+          age_18_plus: boolean
+          circle_id: string
+          early_evening: boolean
+          id: string
+          low_cost: boolean
+          no_drinking: boolean
+          no_parties: boolean
+          no_smoking: boolean
+          notes: string | null
+          public_campus_only: boolean
+          study_focused: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          accessibility_needed?: boolean
+          age_18_plus?: boolean
+          circle_id: string
+          early_evening?: boolean
+          id?: string
+          low_cost?: boolean
+          no_drinking?: boolean
+          no_parties?: boolean
+          no_smoking?: boolean
+          notes?: string | null
+          public_campus_only?: boolean
+          study_focused?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          accessibility_needed?: boolean
+          age_18_plus?: boolean
+          circle_id?: string
+          early_evening?: boolean
+          id?: string
+          low_cost?: boolean
+          no_drinking?: boolean
+          no_parties?: boolean
+          no_smoking?: boolean
+          notes?: string | null
+          public_campus_only?: boolean
+          study_focused?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_rules_circle_id_fkey"
+            columns: ["circle_id"]
+            isOneToOne: true
+            referencedRelation: "circles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_rules_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "circle_rules_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "circle_rules_updated_by_fkey"
+            columns: ["updated_by"]
             isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
@@ -438,6 +690,13 @@ export type Database = {
             foreignKeyName: "community_members_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "community_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -467,24 +726,36 @@ export type Database = {
       karma_events: {
         Row: {
           created_at: string
+          delta: number
           id: string
           kind: Database["public"]["Enums"]["karma_kind"]
+          metadata: Json
           profile_id: string
+          report_id: string | null
           source_id: string | null
+          source_key: string | null
         }
         Insert: {
           created_at?: string
+          delta?: number
           id?: string
           kind: Database["public"]["Enums"]["karma_kind"]
+          metadata?: Json
           profile_id: string
+          report_id?: string | null
           source_id?: string | null
+          source_key?: string | null
         }
         Update: {
           created_at?: string
+          delta?: number
           id?: string
           kind?: Database["public"]["Enums"]["karma_kind"]
+          metadata?: Json
           profile_id?: string
+          report_id?: string | null
           source_id?: string | null
+          source_key?: string | null
         }
         Relationships: [
           {
@@ -498,7 +769,21 @@ export type Database = {
             foreignKeyName: "karma_events_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "karma_events_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "karma_events_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
             referencedColumns: ["id"]
           },
         ]
@@ -598,6 +883,13 @@ export type Database = {
             foreignKeyName: "messages_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "messages_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -613,6 +905,86 @@ export type Database = {
             columns: ["community_id"]
             isOneToOne: false
             referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      moderation_actions: {
+        Row: {
+          action: Database["public"]["Enums"]["moderation_action_type"]
+          actor_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          report_id: string | null
+          target_profile_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["moderation_action_type"]
+          actor_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          report_id?: string | null
+          target_profile_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["moderation_action_type"]
+          actor_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          report_id?: string | null
+          target_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moderation_actions_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderation_actions_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "moderation_actions_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderation_actions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderation_actions_target_profile_id_fkey"
+            columns: ["target_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderation_actions_target_profile_id_fkey"
+            columns: ["target_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "moderation_actions_target_profile_id_fkey"
+            columns: ["target_profile_id"]
+            isOneToOne: false
+            referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
         ]
@@ -660,6 +1032,13 @@ export type Database = {
             foreignKeyName: "posts_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -702,6 +1081,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "profile_verifications_profile_id_fkey"
@@ -810,6 +1196,7 @@ export type Database = {
       reports: {
         Row: {
           activity_id: string | null
+          category: Database["public"]["Enums"]["report_category"]
           circle_id: string | null
           created_at: string
           details: string | null
@@ -821,6 +1208,7 @@ export type Database = {
         }
         Insert: {
           activity_id?: string | null
+          category?: Database["public"]["Enums"]["report_category"]
           circle_id?: string | null
           created_at?: string
           details?: string | null
@@ -832,6 +1220,7 @@ export type Database = {
         }
         Update: {
           activity_id?: string | null
+          category?: Database["public"]["Enums"]["report_category"]
           circle_id?: string | null
           created_at?: string
           details?: string | null
@@ -867,6 +1256,13 @@ export type Database = {
             foreignKeyName: "reports_reporter_id_fkey"
             columns: ["reporter_id"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -876,6 +1272,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_subject_profile_id_fkey"
+            columns: ["subject_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "reports_subject_profile_id_fkey"
@@ -914,6 +1317,89 @@ export type Database = {
             columns: ["university_id"]
             isOneToOne: false
             referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      safety_acknowledgements: {
+        Row: {
+          acknowledged_at: string
+          document_key: string
+          document_version: number
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          acknowledged_at?: string
+          document_key: string
+          document_version: number
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          acknowledged_at?: string
+          document_key?: string
+          document_version?: number
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "safety_acknowledgements_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "safety_acknowledgements_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "safety_acknowledgements_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      safety_moderators: {
+        Row: {
+          created_at: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "safety_moderators_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "safety_moderators_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "safety_moderators_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
         ]
@@ -1011,6 +1497,13 @@ export type Database = {
             foreignKeyName: "user_availability_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "user_availability_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -1043,6 +1536,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_interests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "user_interests_user_id_fkey"
@@ -1111,6 +1611,123 @@ export type Database = {
             foreignKeyName: "user_preferences_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "user_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_reputation: {
+        Row: {
+          karma: number
+          late_cancellations: number
+          no_shows: number
+          plans_accepted: number
+          plans_attended: number
+          profile_id: string
+          standing: Database["public"]["Enums"]["community_standing"]
+          updated_at: string
+        }
+        Insert: {
+          karma?: number
+          late_cancellations?: number
+          no_shows?: number
+          plans_accepted?: number
+          plans_attended?: number
+          profile_id: string
+          standing?: Database["public"]["Enums"]["community_standing"]
+          updated_at?: string
+        }
+        Update: {
+          karma?: number
+          late_cancellations?: number
+          no_shows?: number
+          plans_accepted?: number
+          plans_attended?: number
+          profile_id?: string
+          standing?: Database["public"]["Enums"]["community_standing"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_reputation_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_reputation_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "user_reputation_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_verifications: {
+        Row: {
+          created_at: string
+          evidence_digest: string | null
+          id: string
+          method: Database["public"]["Enums"]["verification_method"]
+          profile_id: string
+          provider: string
+          status: Database["public"]["Enums"]["verification_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          evidence_digest?: string | null
+          id?: string
+          method: Database["public"]["Enums"]["verification_method"]
+          profile_id: string
+          provider?: string
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          evidence_digest?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["verification_method"]
+          profile_id?: string
+          provider?: string
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "user_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "student_directory"
             referencedColumns: ["id"]
           },
@@ -1118,6 +1735,86 @@ export type Database = {
       }
     }
     Views: {
+      public_trust_badges: {
+        Row: {
+          profile_id: string | null
+          university_verified: boolean | null
+        }
+        Insert: {
+          profile_id?: string | null
+          university_verified?: never
+        }
+        Update: {
+          profile_id?: string | null
+          university_verified?: never
+        }
+        Relationships: []
+      }
+      reputation_events: {
+        Row: {
+          created_at: string | null
+          delta: number | null
+          id: string | null
+          kind: Database["public"]["Enums"]["karma_kind"] | null
+          metadata: Json | null
+          profile_id: string | null
+          report_id: string | null
+          source_id: string | null
+          source_key: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          delta?: number | null
+          id?: string | null
+          kind?: Database["public"]["Enums"]["karma_kind"] | null
+          metadata?: Json | null
+          profile_id?: string | null
+          report_id?: string | null
+          source_id?: string | null
+          source_key?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          delta?: number | null
+          id?: string | null
+          kind?: Database["public"]["Enums"]["karma_kind"] | null
+          metadata?: Json | null
+          profile_id?: string | null
+          report_id?: string | null
+          source_id?: string | null
+          source_key?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "karma_events_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "karma_events_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_trust_badges"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "karma_events_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "student_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "karma_events_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_directory: {
         Row: {
           avatar_url: string | null
@@ -1167,20 +1864,92 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      apply_moderation_action: {
+        Args: {
+          p_action: Database["public"]["Enums"]["moderation_action_type"]
+          p_notes?: string
+          p_report_id?: string
+          p_target: string
+        }
+        Returns: string
+      }
+      filter_match_candidates: {
+        Args: { candidate_ids: string[] }
+        Returns: string[]
+      }
+      leave_circle: {
+        Args: {
+          p_circle_id: string
+          p_notes?: string
+          p_reason?: Database["public"]["Enums"]["circle_leave_reason"]
+        }
+        Returns: undefined
+      }
+      record_own_karma_event: {
+        Args: {
+          p_kind: Database["public"]["Enums"]["karma_kind"]
+          p_metadata?: Json
+          p_source_id?: string
+          p_source_key?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       activity_status: "upcoming" | "completed" | "cancelled"
+      attendance_status: "attended" | "no_show"
       availability_window: "morning" | "afternoon" | "evening"
+      circle_leave_reason:
+        | "not_clicking"
+        | "schedule"
+        | "no_longer_interested"
+        | "felt_uncomfortable"
+        | "other"
       circle_stage: "introduced" | "met_once" | "met_again" | "regular"
       community_kind: "major" | "campus" | "interest"
+      community_standing: "good" | "limited" | "restricted" | "suspended"
       data_status: "verified" | "needs_review"
       hang_again: "yes" | "maybe" | "no"
-      karma_kind: "rsvp_kept" | "no_show" | "meetup_completed"
+      karma_kind:
+        | "rsvp_kept"
+        | "no_show"
+        | "meetup_completed"
+        | "rsvp_accepted"
+        | "late_cancellation"
+        | "plan_organized"
+        | "consistent_participation"
+        | "university_verified"
+        | "identity_verified"
+        | "confirmed_spam"
+        | "confirmed_harassment"
+        | "confirmed_rule_violation"
       location_category: "hangout" | "gym" | "library" | "dining"
-      report_status: "open" | "reviewing" | "resolved" | "dismissed"
+      moderation_action_type:
+        | "dismiss_report"
+        | "confirm_violation"
+        | "confirm_harassment"
+        | "confirm_spam"
+        | "restrict_account"
+        | "suspend_account"
+        | "restore_account"
+      report_category:
+        | "harassment"
+        | "spam"
+        | "threatening_behavior"
+        | "hate_discrimination"
+        | "unsafe_behavior"
+        | "fake_account"
+        | "inappropriate_content"
+        | "other"
+      report_status:
+        | "open"
+        | "reviewing"
+        | "resolved"
+        | "dismissed"
+        | "confirmed"
       rsvp_status: "pending" | "in" | "cant"
-      verification_method: "edu_email"
+      verification_method: "edu_email" | "identity_provider"
+      verification_status: "unverified" | "pending" | "verified" | "failed"
       year_level: "Freshman" | "Sophomore" | "Junior" | "Senior" | "Graduate"
     }
     CompositeTypes: {
@@ -1310,16 +2079,64 @@ export const Constants = {
   public: {
     Enums: {
       activity_status: ["upcoming", "completed", "cancelled"],
+      attendance_status: ["attended", "no_show"],
       availability_window: ["morning", "afternoon", "evening"],
+      circle_leave_reason: [
+        "not_clicking",
+        "schedule",
+        "no_longer_interested",
+        "felt_uncomfortable",
+        "other",
+      ],
       circle_stage: ["introduced", "met_once", "met_again", "regular"],
       community_kind: ["major", "campus", "interest"],
+      community_standing: ["good", "limited", "restricted", "suspended"],
       data_status: ["verified", "needs_review"],
       hang_again: ["yes", "maybe", "no"],
-      karma_kind: ["rsvp_kept", "no_show", "meetup_completed"],
+      karma_kind: [
+        "rsvp_kept",
+        "no_show",
+        "meetup_completed",
+        "rsvp_accepted",
+        "late_cancellation",
+        "plan_organized",
+        "consistent_participation",
+        "university_verified",
+        "identity_verified",
+        "confirmed_spam",
+        "confirmed_harassment",
+        "confirmed_rule_violation",
+      ],
       location_category: ["hangout", "gym", "library", "dining"],
-      report_status: ["open", "reviewing", "resolved", "dismissed"],
+      moderation_action_type: [
+        "dismiss_report",
+        "confirm_violation",
+        "confirm_harassment",
+        "confirm_spam",
+        "restrict_account",
+        "suspend_account",
+        "restore_account",
+      ],
+      report_category: [
+        "harassment",
+        "spam",
+        "threatening_behavior",
+        "hate_discrimination",
+        "unsafe_behavior",
+        "fake_account",
+        "inappropriate_content",
+        "other",
+      ],
+      report_status: [
+        "open",
+        "reviewing",
+        "resolved",
+        "dismissed",
+        "confirmed",
+      ],
       rsvp_status: ["pending", "in", "cant"],
-      verification_method: ["edu_email"],
+      verification_method: ["edu_email", "identity_provider"],
+      verification_status: ["unverified", "pending", "verified", "failed"],
       year_level: ["Freshman", "Sophomore", "Junior", "Senior", "Graduate"],
     },
   },
@@ -1337,6 +2154,12 @@ export type CommunityKind = Database["public"]["Enums"]["community_kind"];
 export type ReportStatus = Database["public"]["Enums"]["report_status"];
 export type KarmaKind = Database["public"]["Enums"]["karma_kind"];
 export type VerificationMethod = Database["public"]["Enums"]["verification_method"];
+export type VerificationStatus = Database["public"]["Enums"]["verification_status"];
+export type ReportCategory = Database["public"]["Enums"]["report_category"];
+export type CommunityStanding = Database["public"]["Enums"]["community_standing"];
+export type CircleLeaveReason = Database["public"]["Enums"]["circle_leave_reason"];
+export type ModerationActionType = Database["public"]["Enums"]["moderation_action_type"];
+export type AttendanceStatus = Database["public"]["Enums"]["attendance_status"];
 
 export interface ProfileVisibility {
   last_name: boolean;

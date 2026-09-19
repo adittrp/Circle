@@ -191,19 +191,22 @@ function combinations<T>(arr: T[], k: number): T[][] {
 export function matchCircle(
   user: User,
   pool: StudentProfile[],
-  groupSize = 4
+  groupSize = 4,
+  options?: { excludedIds?: Iterable<string> }
 ): StudentProfile[] {
-  // Curated demo Circle: organizer + suggester + reliable participants
-  const preferredIds = ["s01", "s02", "s03", "s08"]; // Maya, Jordan, Sam, Quinn
+  const excluded = new Set(options?.excludedIds ?? []);
+  const eligible = pool.filter((p) => !excluded.has(p.id) && p.id !== user.id);
+
+  const preferredIds = ["s01", "s02", "s03", "s08"];
   const preferred = preferredIds
-    .map((id) => pool.find((p) => p.id === id))
+    .map((id) => eligible.find((p) => p.id === id))
     .filter((p): p is StudentProfile => Boolean(p));
 
   if (preferred.length === groupSize && user.isDemo) {
     return preferred;
   }
 
-  const ranked = pool
+  const ranked = eligible
     .map((s) => scorePair(user, s))
     .sort((a, b) => b.score - a.score);
 

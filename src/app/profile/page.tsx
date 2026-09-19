@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -180,6 +181,11 @@ export default function ProfilePage() {
         <Button disabled={saving} onClick={() => void save()}>
           {saving ? "Saving..." : "Save"}
         </Button>
+        <Link href="/trust" className="sm:flex-1">
+          <Button variant="secondary" fullWidth>
+            Your standing
+          </Button>
+        </Link>
         <form action="/auth/signout" method="post">
           <Button variant="secondary" type="submit">
             Sign out

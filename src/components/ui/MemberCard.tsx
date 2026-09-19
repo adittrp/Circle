@@ -12,6 +12,7 @@ interface MemberCardProps {
   interests: Interest[];
   isYou?: boolean;
   compact?: boolean;
+  universityVerified?: boolean;
 }
 
 export function MemberCard({
@@ -23,6 +24,7 @@ export function MemberCard({
   interests,
   isYou,
   compact,
+  universityVerified,
 }: MemberCardProps) {
   return (
     <div
@@ -36,6 +38,9 @@ export function MemberCard({
             <span className="ml-1 text-xs font-medium text-teal-700">(you)</span>
           ) : null}
         </p>
+        {universityVerified ? (
+          <p className="mt-1 text-[11px] font-semibold text-teal-800">University Verified</p>
+        ) : null}
         <p className="text-sm text-slate-500">
           {year} · {major}
         </p>
