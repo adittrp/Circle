@@ -1,6 +1,5 @@
 "use client";
 
-import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -10,29 +9,24 @@ function VerifyBody() {
   const email = useSearchParams().get("email");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-10 text-center">
-      <div className="flex justify-center">
-        <Wordmark />
-      </div>
-      <div className="mx-auto mt-10 flex h-16 w-16 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-        <Mail className="h-7 w-7" />
-      </div>
-      <h1 className="font-display mt-6 text-3xl font-bold">Check your inbox</h1>
-      <p className="mt-3 text-slate-500">
+    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-12">
+      <Wordmark size="sm" />
+      <h1 className="text-page-title mt-10">Check your inbox</h1>
+      <p className="text-body-secondary mt-3">
         We sent a sign-in link
         {email ? (
           <>
             {" "}
-            to <span className="font-semibold text-slate-800">{email}</span>
+            to <span className="font-semibold text-[var(--ink)]">{email}</span>
           </>
         ) : (
           " to your school email"
         )}
-        . Open it on this device. That click signs you in — you should not need a second email.
+        . Open it on this device — that click signs you in.
       </p>
-      <p className="mt-8 text-sm text-slate-500">
+      <p className="mt-8 text-caption">
         Wrong address?{" "}
-        <Link href="/signup" className="font-semibold text-teal-700">
+        <Link href="/signup" className="font-semibold text-[var(--brand-ink)]">
           Try again
         </Link>
       </p>
@@ -44,8 +38,8 @@ export default function VerifyPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-screen items-center justify-center text-slate-500">
-          Loading...
+        <main className="flex min-h-screen items-center justify-center text-[var(--ink-muted)]">
+          Loading…
         </main>
       }
     >

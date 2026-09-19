@@ -1,6 +1,5 @@
 "use client";
 
-import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { formatPlanWhen } from "@/lib/hangouts/availability";
 import { rsvpCounts } from "@/lib/hangouts/momentum";
@@ -29,76 +28,62 @@ export function PlanCard({
     <section
       className={
         emphasize
-          ? "overflow-hidden rounded-3xl bg-slate-900 p-6 text-white shadow-xl"
-          : "card-surface p-5"
+          ? "rounded-[var(--radius-md)] border border-[var(--brand)] bg-[var(--brand-soft)] p-5"
+          : "rounded-[var(--radius-md)] border border-[var(--line)] bg-[var(--bg-elevated)] p-5"
       }
     >
-      <p
-        className={`text-xs font-semibold uppercase tracking-wider ${
-          emphasize ? "text-teal-300" : "text-teal-700"
-        }`}
-      >
-        {isMission ? "First Mission" : activity.is_spontaneous ? "Right now" : "Plan"}
+      <p className="text-caption font-semibold text-[var(--brand-ink)]">
+        {isMission ? "First mission" : activity.is_spontaneous ? "Right now" : "Plan"}
       </p>
-      <h3 className="font-display mt-2 text-2xl font-bold">
-        {activity.emoji} {activity.title}
+      <h3 className="text-section mt-2">
+        <span aria-hidden>{activity.emoji} </span>
+        {activity.title}
       </h3>
-      <p className={emphasize ? "mt-1 text-teal-100/90" : "mt-1 text-slate-600"}>
-        {formatPlanWhen(activity.starts_at)}
-        {activity.duration_minutes ? ` · ${activity.duration_minutes} min` : ""}
-      </p>
-      <p
-        className={`mt-1 flex items-center gap-1.5 text-sm ${
-          emphasize ? "text-slate-300" : "text-slate-500"
-        }`}
-      >
-        <MapPin className="h-4 w-4" />
-        {activity.location_label || "On campus"}
-      </p>
+      <dl className="mt-3 space-y-1 text-sm text-[var(--ink-secondary)]">
+        <div>
+          <dt className="sr-only">When</dt>
+          <dd>
+            {formatPlanWhen(activity.starts_at)}
+            {activity.duration_minutes ? ` · ${activity.duration_minutes} min` : ""}
+          </dd>
+        </div>
+        <div>
+          <dt className="sr-only">Where</dt>
+          <dd>{activity.location_label || "On campus"}</dd>
+        </div>
+      </dl>
       {activity.reason ? (
-        <p className={`mt-3 text-sm ${emphasize ? "text-slate-300" : "text-slate-600"}`}>
-          {activity.reason}
-        </p>
+        <p className="text-caption mt-3">{activity.reason}</p>
       ) : null}
       <div className="mt-4 flex items-center justify-between text-sm">
-        <p className={emphasize ? "text-teal-100" : "font-medium text-slate-700"}>
-          {going} / {total} going
+        <p className="font-medium text-[var(--ink-secondary)]">
+          {going} of {total} going
         </p>
         {mine === "in" && onComplete && activity.status === "upcoming" ? (
-          <Button size="sm" variant={emphasize ? "secondary" : "secondary"} onClick={onComplete}>
+          <Button size="sm" variant="quiet" onClick={onComplete}>
             Mark done
           </Button>
         ) : null}
       </div>
       {activity.status === "upcoming" ? (
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <Button
-            size="sm"
-            variant={mine === "in" ? "primary" : "secondary"}
-            className={emphasize && mine !== "in" ? "!bg-white/10 !text-white !border-white/20" : ""}
-            disabled={mine === "in"}
-            onClick={() => onRsvp("in")}
-          >
-            {mine === "in" ? "You're in" : "I'm In"}
-          </Button>
-          <Button
-            size="sm"
-            variant={mine === "maybe" ? "primary" : "secondary"}
-            className={emphasize && mine !== "maybe" ? "!bg-white/10 !text-white !border-white/20" : ""}
-            disabled={mine === "maybe"}
-            onClick={() => onRsvp("maybe")}
-          >
-            Maybe
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            className={emphasize ? "!bg-white/10 !text-white !border-white/20" : ""}
-            disabled={mine === "cant"}
-            onClick={() => onRsvp("cant")}
-          >
-            Can&apos;t
-          </Button>
+          {(
+            [
+              { status: "in" as const, label: mine === "in" ? "Going" : "Going" },
+              { status: "maybe" as const, label: "Maybe" },
+              { status: "cant" as const, label: "Can't" },
+            ] as const
+          ).map((opt) => (
+            <Button
+              key={opt.status}
+              size="sm"
+              variant={mine === opt.status ? "primary" : "secondary"}
+              aria-pressed={mine === opt.status}
+              onClick={() => onRsvp(opt.status)}
+            >
+              {opt.label}
+            </Button>
+          ))}
         </div>
       ) : null}
     </section>

@@ -3,9 +3,9 @@
 import Link from "next/link";
 import {
   Bookmark,
+  Calendar,
   Flag,
   MessageCircle,
-  Sparkles,
   ChevronUp,
   Users,
 } from "lucide-react";
@@ -65,7 +65,7 @@ export function PostCard({
             onClick={() => onVote?.(post.id, interested ? 0 : 1)}
             className={`rounded-md p-1 transition ${
               interested
-                ? "text-[#00B84D]"
+                ? "text-[var(--brand)]"
                 : "text-slate-400 hover:bg-slate-200 hover:text-slate-700"
             }`}
           >
@@ -73,7 +73,7 @@ export function PostCard({
           </button>
           <span
             className={`text-xs font-bold tabular-nums ${
-              interested ? "text-[#00B84D]" : "text-slate-700"
+              interested ? "text-[var(--brand)]" : "text-slate-700"
             }`}
           >
             {post.vote_score}
@@ -161,7 +161,7 @@ export function PostCard({
             <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
               {showPlan && !post.suggested_activity_id ? (
                 <Button size="sm" onClick={() => onStartPlan?.(post)}>
-                  <Sparkles className="h-4 w-4" />
+                  <Calendar className="h-4 w-4" />
                   Start a Plan
                 </Button>
               ) : null}
@@ -176,12 +176,12 @@ export function PostCard({
                 </Button>
               ) : null}
               {post.suggested_activity_id ? (
-                <span className="self-center text-xs font-semibold text-[#00B84D]">
+                <span className="self-center text-xs font-semibold text-[var(--brand)]">
                   Plan started from this post
                 </span>
               ) : null}
               {post.suggested_circle_id ? (
-                <span className="self-center text-xs font-semibold text-[#00B84D]">
+                <span className="self-center text-xs font-semibold text-[var(--brand)]">
                   Circle created from this post
                 </span>
               ) : null}

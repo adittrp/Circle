@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Plus, Sparkles, Users } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { CampusShell } from "@/components/campus/CampusShell";
 import { PostCard } from "@/components/campus/PostCard";
 import { Button } from "@/components/ui/Button";
@@ -101,7 +101,7 @@ export default function CampusHomePage() {
 
   if (!identity.ready) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#dae0e6] text-slate-500">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-slate-500">
         Loading campus…
       </main>
     );
@@ -111,7 +111,7 @@ export default function CampusHomePage() {
     return (
       <main className="mx-auto max-w-lg px-5 py-16 text-center">
         <h1 className="font-display text-2xl font-bold">Finish onboarding first</h1>
-        <Link href="/onboarding" className="mt-6 inline-block text-[#00B84D]">
+        <Link href="/onboarding" className="mt-6 inline-block text-[var(--brand)]">
           Continue onboarding →
         </Link>
       </main>
@@ -126,70 +126,55 @@ export default function CampusHomePage() {
       communities={communities}
       rightRail={
         <div className="space-y-4">
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div className="h-10 bg-gradient-to-r from-[#00B84D] to-teal-600" />
-            <div className="p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Personalized for you
-              </p>
-              <h2 className="mt-1 text-lg font-bold text-slate-900">
-                Hey {firstName}
-              </h2>
-              <p className="mt-1 text-sm text-slate-600">
-                Home shows posts from communities you belong to at {uni}.
-              </p>
-              <div className="mt-3 space-y-2">
-                {featured.major ? (
-                  <Shortcut
-                    href={`/campus/c/${featured.major.slug}`}
-                    label={featured.major.name}
-                    hint="Major"
-                  />
-                ) : null}
-                {featured.residence ? (
-                  <Shortcut
-                    href={`/campus/c/${featured.residence.slug}`}
-                    label={featured.residence.name}
-                    hint="Near you"
-                  />
-                ) : null}
-                {featured.year ? (
-                  <Shortcut
-                    href={`/campus/c/${featured.year.slug}`}
-                    label={featured.year.name}
-                    hint="Year"
-                  />
-                ) : null}
-              </div>
+          <div className="rounded-[var(--radius-md)] border border-[var(--line)] bg-[var(--bg-elevated)] p-4">
+            <p className="text-label">For you</p>
+            <h2 className="text-section mt-1 text-[1.1rem]">Hey {firstName}</h2>
+            <p className="text-body-secondary mt-1 text-sm">
+              Home shows posts from communities you belong to at {uni}.
+            </p>
+            <div className="mt-3 space-y-1">
+              {featured.major ? (
+                <Shortcut
+                  href={`/campus/c/${featured.major.slug}`}
+                  label={featured.major.name}
+                  hint="Major"
+                />
+              ) : null}
+              {featured.residence ? (
+                <Shortcut
+                  href={`/campus/c/${featured.residence.slug}`}
+                  label={featured.residence.name}
+                  hint="Near you"
+                />
+              ) : null}
+              {featured.year ? (
+                <Shortcut
+                  href={`/campus/c/${featured.year.slug}`}
+                  label={featured.year.name}
+                  hint="Year"
+                />
+              ) : null}
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-              Happening soon
-            </p>
-            <Link
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setTab("looking");
-              }}
-              className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-slate-50"
+          <div className="rounded-[var(--radius-md)] border border-[var(--line)] bg-[var(--bg-elevated)] p-4">
+            <p className="text-label mb-2">Happening soon</p>
+            <button
+              type="button"
+              onClick={() => setTab("looking")}
+              className="flex w-full items-center gap-2 rounded-[var(--radius-sm)] px-2 py-2 text-left text-sm hover:bg-[var(--bg-muted)]"
             >
-              <Users className="h-4 w-4 text-violet-600" />
+              <Users className="h-4 w-4 text-[var(--ink-muted)]" />
               Looking for people · {looking.length}
-            </Link>
-            <Link
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setTab("plans");
-              }}
-              className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-slate-50"
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("plans")}
+              className="flex w-full items-center gap-2 rounded-[var(--radius-sm)] px-2 py-2 text-left text-sm hover:bg-[var(--bg-muted)]"
             >
-              <Sparkles className="h-4 w-4 text-orange-500" />
+              <Plus className="h-4 w-4 text-[var(--ink-muted)]" />
               Plans forming · {plans.length}
-            </Link>
+            </button>
           </div>
         </div>
       }
@@ -241,7 +226,7 @@ export default function CampusHomePage() {
                   onClick={() => setSort(s)}
                   className={`rounded-full px-2.5 py-1 text-xs font-bold capitalize ${
                     sort === s
-                      ? "bg-[#00B84D]/15 text-[#00B84D]"
+                      ? "bg-[var(--brand)]/15 text-[var(--brand)]"
                       : "text-slate-500 hover:bg-slate-100"
                   }`}
                 >
@@ -253,7 +238,7 @@ export default function CampusHomePage() {
         </div>
 
         {message ? (
-          <p className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+          <p className="rounded-xl border border-[var(--brand-soft)] bg-[var(--brand-soft)] px-4 py-3 text-sm text-[var(--brand-ink)]">
             {message}
           </p>
         ) : null}

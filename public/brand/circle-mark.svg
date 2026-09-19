@@ -1,5 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Circle">
-  <circle cx="56" cy="60" r="38" stroke="#00B84D" stroke-width="10" fill="none"/>
-  <text x="56" y="68" text-anchor="middle" font-family="Arial Black, Helvetica Neue, Arial, sans-serif" font-size="52" font-weight="800" fill="#00B84D">C</text>
-  <circle cx="94" cy="60" r="12" fill="#00B84D"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none" role="img" aria-label="Circle">
+  <!-- Content-tight viewBox. Mark mass sits optically centered in the square. -->
+  <circle cx="44" cy="48" r="30" stroke="#00B84D" stroke-width="8" fill="none"/>
+  <text
+    x="44"
+    y="48"
+    dominant-baseline="central"
+    text-anchor="middle"
+    font-family="var(--font-outfit), Outfit, Arial Black, Helvetica Neue, Arial, sans-serif"
+    font-size="40"
+    font-weight="800"
+    fill="#00B84D"
+  >C</text>
+  <circle cx="70" cy="48" r="9" fill="#00B84D"/>
 </svg>

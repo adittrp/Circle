@@ -81,7 +81,7 @@ export function HangoutsHome() {
             <Button onClick={() => void start()} disabled={creating}>
               Start a hangout Circle
             </Button>
-            <Link href="/circles" className="text-sm font-medium text-teal-700 self-center">
+            <Link href="/circles" className="text-sm font-medium text-[var(--brand-ink)] self-center">
               View Circles
             </Link>
           </div>
@@ -101,7 +101,7 @@ export function HangoutsHome() {
       <section className="mt-8">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Your Circle</h2>
-          <Link href={`/circles/${hub.bundle.circle.id}`} className="text-sm font-medium text-teal-700">
+          <Link href={`/circles/${hub.bundle.circle.id}`} className="text-sm font-medium text-[var(--brand-ink)]">
             Open hub
           </Link>
         </div>

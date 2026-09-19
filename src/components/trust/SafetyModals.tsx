@@ -66,7 +66,7 @@ export function ReportModal({
                 onClick={() => setCategory(c.id)}
                 className={`rounded-xl border px-3 py-2 text-left text-sm ${
                   category === c.id
-                    ? "border-teal-500 bg-teal-50 text-teal-900"
+                    ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-ink)]"
                     : "border-slate-200 bg-white"
                 }`}
               >
@@ -78,7 +78,7 @@ export function ReportModal({
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             placeholder="Anything else we should know? (optional)"
-            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-teal-500"
+            className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-[var(--brand)]"
             rows={3}
           />
           {error ? <p className="text-sm text-orange-700">{error}</p> : null}
@@ -120,7 +120,7 @@ export function LeaveCircleModal({
             type="button"
             onClick={() => setReason(r.id)}
             className={`w-full rounded-xl border px-3 py-2 text-left text-sm ${
-              reason === r.id ? "border-teal-500 bg-teal-50" : "border-slate-200"
+              reason === r.id ? "border-[var(--brand)] bg-[var(--brand-soft)]" : "border-slate-200"
             }`}
           >
             {r.label}
@@ -128,7 +128,7 @@ export function LeaveCircleModal({
         ))}
       </div>
       {selected?.safetyRelated ? (
-        <div className="mt-3 rounded-xl bg-teal-50 px-3 py-3 text-sm text-teal-900">
+        <div className="mt-3 rounded-xl bg-[var(--brand-soft)] px-3 py-3 text-sm text-[var(--brand-ink)]">
           <p>If you felt uncomfortable, you can report someone. You don&apos;t have to.</p>
           {onReport ? (
             <button type="button" className="mt-2 font-semibold underline" onClick={onReport}>

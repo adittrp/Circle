@@ -41,7 +41,7 @@ export function FeedbackModal({
                 type="button"
                 onClick={() => setEmoji(e)}
                 className={`flex h-14 w-14 items-center justify-center rounded-2xl border text-2xl ${
-                  emoji === e ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white"
+                  emoji === e ? "border-[var(--brand)] bg-[var(--brand-soft)]" : "border-slate-200 bg-white"
                 }`}
               >
                 {e}

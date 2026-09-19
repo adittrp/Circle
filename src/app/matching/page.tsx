@@ -141,7 +141,7 @@ export default function MatchingPage() {
         <p className="mt-3 text-slate-500">{error}</p>
         <button
           type="button"
-          className="mt-6 text-sm font-semibold text-teal-700"
+          className="mt-6 text-sm font-semibold text-[var(--brand-ink)]"
           onClick={() => router.push("/people")}
         >
           Discover people on campus
@@ -167,7 +167,7 @@ export default function MatchingPage() {
         {[0, 1, 2, 3, 4].map((i) => (
           <motion.div
             key={i}
-            className="absolute left-1/2 top-1/2 -ml-2 -mt-2 h-4 w-4 rounded-full bg-teal-500"
+            className="absolute left-1/2 top-1/2 -ml-2 -mt-2 h-4 w-4 rounded-full bg-[var(--brand)]"
             animate={{
               x: Math.cos((i / 5) * Math.PI * 2) * 42,
               y: Math.sin((i / 5) * Math.PI * 2) * 42,
@@ -178,7 +178,7 @@ export default function MatchingPage() {
             }}
           />
         ))}
-        <div className="absolute inset-0 m-auto h-14 w-14 rounded-full bg-teal-600 shadow-lg shadow-teal-600/30" />
+        <div className="absolute inset-0 m-auto h-14 w-14 rounded-full bg-[var(--brand)] shadow-lg shadow-none" />
       </motion.div>
 
       <AnimatePresence mode="wait">
@@ -194,7 +194,7 @@ export default function MatchingPage() {
       </AnimatePresence>
 
       <p className="mt-3 text-slate-500">
-        {done ? "Almost there..." : "Optimizing for group chemistry"}
+        {done ? "Almost there…" : "Looking at schedules and shared interests"}
       </p>
 
       <div className="mt-8 flex gap-2">
@@ -202,7 +202,7 @@ export default function MatchingPage() {
           <div
             key={i}
             className={`h-1.5 w-8 rounded-full transition-colors ${
-              i <= index ? "bg-teal-600" : "bg-slate-200"
+              i <= index ? "bg-[var(--brand)]" : "bg-slate-200"
             }`}
           />
         ))}

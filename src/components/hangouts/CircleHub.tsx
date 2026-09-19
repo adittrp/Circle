@@ -68,7 +68,7 @@ export function CircleHub({ circleId }: { circleId: string }) {
       <AppHeader />
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand-ink)]">
             {hub.bundle.universityName}
           </p>
           <h1 className="font-display text-3xl font-bold text-slate-900">Your Circle</h1>
@@ -104,7 +104,7 @@ export function CircleHub({ circleId }: { circleId: string }) {
               <Avatar src={member.avatarUrl ?? ""} name={member.firstName} size="md" ring={member.isYou} />
               <p className="mt-2 text-sm font-semibold">
                 {member.firstName}
-                {member.isYou ? <span className="text-teal-700"> (you)</span> : null}
+                {member.isYou ? <span className="text-[var(--brand-ink)]"> (you)</span> : null}
               </p>
               <p className="text-xs text-slate-500">
                 {[member.year, member.major].filter(Boolean).join(" · ") || "Student"}
@@ -155,7 +155,7 @@ export function CircleHub({ circleId }: { circleId: string }) {
                 className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2.5 text-sm"
               >
                 <span>{slot.label}</span>
-                <span className="font-medium text-teal-700">
+                <span className="font-medium text-[var(--brand-ink)]">
                   {slot.count}/{slot.total} free
                 </span>
               </li>

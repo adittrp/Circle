@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 interface ChipProps {
   label: string;
   selected?: boolean;
@@ -11,15 +9,15 @@ interface ChipProps {
 
 export function Chip({ label, selected, onClick, emoji }: ChipProps) {
   return (
-    <motion.button
+    <button
       type="button"
-      whileTap={{ scale: 0.96 }}
       onClick={onClick}
       data-selected={selected ? "true" : "false"}
       className="chip cursor-pointer"
+      aria-pressed={selected}
     >
-      {emoji ? <span>{emoji}</span> : null}
+      {emoji ? <span aria-hidden>{emoji}</span> : null}
       <span>{label}</span>
-    </motion.button>
+    </button>
   );
 }

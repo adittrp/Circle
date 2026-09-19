@@ -27,7 +27,7 @@ import {
 import type { AvailabilityWindow, YearLevel } from "@/lib/supabase/database.types";
 
 const fieldClass =
-  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-100";
+  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none focus:border-[var(--brand)] focus:ring-4 focus:ring-[var(--brand-soft)]";
 
 type BasicsDraft = {
   first_name: string;
@@ -402,7 +402,7 @@ export default function OnboardingPage() {
                 body="A .edu domain is a starting point — you still pick the campus you actually attend."
               />
               {inferred ? (
-                <p className="rounded-2xl bg-teal-50 px-4 py-3 text-sm text-teal-900">
+                <p className="rounded-2xl bg-[var(--brand-soft)] px-4 py-3 text-sm text-[var(--brand-ink)]">
                   We matched <span className="font-semibold">{identity.email}</span> to{" "}
                   <span className="font-semibold">{inferred.name}</span>. Confirm or change it below.
                 </p>
@@ -553,10 +553,10 @@ export default function OnboardingPage() {
                   </li>
                 ))}
               </ul>
-              <label className="flex items-start gap-3 rounded-2xl bg-teal-50 p-4 text-sm text-teal-950">
+              <label className="flex items-start gap-3 rounded-2xl bg-[var(--brand-soft)] p-4 text-sm text-[var(--brand-ink)]">
                 <input
                   type="checkbox"
-                  className="mt-1 accent-teal-700"
+                  className="mt-1 accent-[var(--brand)]"
                   checked={agreed || trust.acknowledged}
                   onChange={(e) => setAgreed(e.target.checked)}
                 />
@@ -580,7 +580,7 @@ export default function OnboardingPage() {
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div
                       key={i}
-                      className={`h-2 flex-1 rounded-full ${i < answered ? "bg-teal-500" : "bg-slate-200"}`}
+                      className={`h-2 flex-1 rounded-full ${i < answered ? "bg-[var(--brand)]" : "bg-slate-200"}`}
                     />
                   ))}
                 </div>
@@ -599,7 +599,7 @@ export default function OnboardingPage() {
                     onChange={(e) =>
                       setVibe((d) => ({ ...d, social_energy: Number(e.target.value) }))
                     }
-                    className="w-full accent-teal-600"
+                    className="w-full accent-[var(--brand)]"
                   />
                 </div>
               </Question>
@@ -620,7 +620,7 @@ export default function OnboardingPage() {
                         spontaneous_vs_planned: Number(e.target.value),
                       }))
                     }
-                    className="w-full accent-teal-600"
+                    className="w-full accent-[var(--brand)]"
                   />
                 </div>
               </Question>
@@ -679,7 +679,7 @@ export default function OnboardingPage() {
 
       {error ? <p className="mt-4 text-sm text-orange-700">{error}</p> : null}
 
-      <div className="sticky bottom-0 mt-8 space-y-2 border-t border-slate-100 bg-[#f4f7fb]/90 py-4 backdrop-blur">
+      <div className="sticky bottom-0 mt-8 space-y-2 border-t border-[var(--line)] bg-[var(--bg)]/95 py-4">
         {step === 5 ? (
           <Button
             fullWidth
@@ -717,7 +717,7 @@ function Header({
 }) {
   return (
     <div>
-      <p className="text-sm font-semibold uppercase tracking-wider text-teal-700">{kicker}</p>
+      <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-ink)]">{kicker}</p>
       <h1 className="font-display mt-1 text-3xl font-bold sm:text-4xl">{title}</h1>
       <p className="mt-2 text-slate-500">{body}</p>
     </div>

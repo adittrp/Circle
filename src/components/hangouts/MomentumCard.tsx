@@ -4,49 +4,47 @@ import { ProgressBar } from "@/components/ui/Progress";
 import { MOMENTUM_FLOW } from "@/lib/hangouts/momentum";
 import type { CircleMomentum } from "@/lib/hangouts/types";
 
+/** Lightweight stage context — not a friendship score. */
 export function MomentumCard({ momentum }: { momentum: CircleMomentum }) {
   return (
-    <section className="card-surface p-5">
-      <div className="mb-3 flex items-center justify-between">
-        <div>
-          <h2 className="font-display text-xl font-bold">Circle Momentum</h2>
-          <p className="text-xs text-slate-500">A playful record of hanging out — not a friendship score.</p>
-        </div>
-        <span className="font-display text-2xl font-bold text-teal-700">{momentum.percent}%</span>
+    <section className="border-t border-[var(--line)] pt-5">
+      <p className="text-label">Your Circle so far</p>
+      <p className="text-section mt-1">{momentum.stage}</p>
+      <p className="text-caption mt-1 max-w-sm">
+        {momentum.completedMeetups} hangout{momentum.completedMeetups === 1 ? "" : "s"} ·{" "}
+        {momentum.activeMembers} active · {momentum.weeksTogether} week
+        {momentum.weeksTogether === 1 ? "" : "s"} together
+      </p>
+      <div className="mt-3">
+        <ProgressBar value={momentum.percent} />
       </div>
-      <ProgressBar value={momentum.percent} />
-      <div className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
-        <div className="rounded-xl bg-slate-50 p-2">
-          <p className="font-semibold">{momentum.completedMeetups}</p>
-          <p className="text-xs text-slate-500">hangouts</p>
-        </div>
-        <div className="rounded-xl bg-slate-50 p-2">
-          <p className="font-semibold">{momentum.activeMembers}</p>
-          <p className="text-xs text-slate-500">active</p>
-        </div>
-        <div className="rounded-xl bg-slate-50 p-2">
-          <p className="font-semibold">{momentum.weeksTogether}</p>
-          <p className="text-xs text-slate-500">weeks</p>
-        </div>
-      </div>
-      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-        {MOMENTUM_FLOW.map((stage, i) => (
-          <span key={stage} className="flex items-center gap-2">
-            <span
-              className={
-                stage === momentum.stage
-                  ? "font-semibold text-teal-700"
-                  : MOMENTUM_FLOW.indexOf(momentum.stage) > i
-                    ? "text-slate-700"
-                    : ""
-              }
-            >
-              {stage}
-            </span>
-            {i < MOMENTUM_FLOW.length - 1 ? <span>→</span> : null}
-          </span>
-        ))}
-      </div>
+      <ol className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-caption">
+        {MOMENTUM_FLOW.map((stage, i) => {
+          const current = MOMENTUM_FLOW.indexOf(momentum.stage);
+          const done = current > i;
+          const here = stage === momentum.stage;
+          return (
+            <li key={stage} className="flex items-center gap-2">
+              <span
+                className={
+                  here
+                    ? "font-semibold text-[var(--brand-ink)]"
+                    : done
+                      ? "text-[var(--ink-secondary)]"
+                      : "text-[var(--ink-faint)]"
+                }
+              >
+                {stage}
+              </span>
+              {i < MOMENTUM_FLOW.length - 1 ? (
+                <span className="text-[var(--ink-faint)]" aria-hidden>
+                  →
+                </span>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }

@@ -44,7 +44,7 @@ export default function NewGroupPage() {
 
   if (!identity.ready || !identity.profile) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#dae0e6] text-slate-500">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-slate-500">
         Loading…
       </main>
     );

@@ -64,7 +64,7 @@ function CallbackBody() {
         <h1 className="font-display mt-10 text-3xl font-bold">Couldn&apos;t sign you in</h1>
         <p className="mt-3 rounded-xl bg-orange-50 px-3 py-2 text-sm text-orange-800">{error}</p>
         <p className="mt-6 text-sm text-slate-500">
-          <Link href="/signup" className="font-semibold text-teal-700">
+          <Link href="/signup" className="font-semibold text-[var(--brand-ink)]">
             Request a new link
           </Link>
         </p>

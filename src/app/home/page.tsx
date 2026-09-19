@@ -8,7 +8,6 @@ import {
   Plus,
   Settings,
   Shield,
-  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -133,114 +132,99 @@ export default function HomePage() {
   if (identity.configured && identity.profile?.onboarding_completed_at) {
     if (!real.ready) {
       return (
-        <main className="flex min-h-screen items-center justify-center text-slate-500">
-          Loading your Circle...
+        <main className="flex min-h-screen items-center justify-center text-[var(--ink-muted)]">
+          Loading…
         </main>
       );
     }
     const hasRealCircle = Boolean(real.circle);
     return (
-      <main className="relative mx-auto min-h-screen max-w-xl px-5 pb-16 pt-6 sm:px-8">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[22rem]"
-          style={{
-            background:
-              "radial-gradient(ellipse 90% 60% at 30% -5%, color-mix(in srgb, var(--uni-primary, #0d9488) 16%, transparent), transparent 70%)",
-          }}
-        />
+      <main className="page-shell">
         <AppHeader />
-        <p className="text-sm text-slate-500">{greeting()},</p>
-        <h1 className="font-display text-3xl font-bold text-slate-900">{firstName}.</h1>
+        <p className="text-caption">{greeting()},</p>
+        <h1 className="text-page-title mt-1">{firstName}</h1>
 
         {hasRealCircle && real.circle ? (
-          <section className="card-surface mt-8 p-6">
-            <h2 className="font-display text-xl font-bold">Your Circle</h2>
-            <p className="mt-2 text-slate-600">
-              You&apos;re in a group of {real.circle.members.length}. Open Hangouts for plans,
-              RSVPs, and chat — or revisit your reveal.
+          <section className="mt-8">
+            <h2 className="text-section">Your Circle</h2>
+            <p className="text-body-secondary mt-2">
+              You&apos;re with {real.circle.members.length} people. Open Hangouts
+              for the next plan, or revisit how you matched.
             </p>
             {real.circle.whyTogether[0] ? (
-              <p className="mt-3 text-sm text-slate-500">{real.circle.whyTogether[0]}</p>
+              <p className="text-caption mt-3">{real.circle.whyTogether[0]}</p>
             ) : null}
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
               <Button onClick={() => router.push(`/circles/${real.circle!.id}`)}>
                 Open Hangouts
               </Button>
               <Button variant="secondary" onClick={() => router.push("/circle")}>
-                Meet your Circle
+                See the reveal
               </Button>
-              <Button variant="secondary" onClick={() => router.push("/people")}>
-                Discover people
+              <Button variant="quiet" onClick={() => router.push("/people")}>
+                People
               </Button>
             </div>
           </section>
         ) : (
-          <section className="card-surface mt-8 p-6">
-            <h2 className="font-display text-xl font-bold">Find My Circle</h2>
-            <p className="mt-2 text-slate-600">
-              We&apos;ll build a small group from students at your university using shared interests,
-              schedules, and group chemistry — not endless swiping.
+          <section className="mt-8">
+            <h2 className="text-section">Find My Circle</h2>
+            <p className="text-body-secondary mt-2">
+              We&apos;ll place you with classmates who share interests, schedules,
+              and group chemistry — not endless swiping.
             </p>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
               <Button onClick={() => router.push("/matching")}>Find My Circle</Button>
               <Button variant="secondary" onClick={() => router.push("/circles")}>
                 My Circles
               </Button>
-              <Button variant="secondary" onClick={() => router.push("/people")}>
+              <Button variant="quiet" onClick={() => router.push("/people")}>
                 Browse people
               </Button>
             </div>
           </section>
         )}
 
-        <section className="mt-10 border-t border-slate-200/80 pt-8">
-          <p className="text-[13px] font-medium text-slate-400">Your standing</p>
-          <div className="mt-4 flex items-end justify-between gap-6">
+        <hr className="hairline" />
+
+        <section>
+          <p className="text-label">Standing</p>
+          <div className="mt-3 flex items-end justify-between gap-6">
             <div>
-              <p className="font-display text-5xl font-bold tabular-nums tracking-tight text-slate-900">
+              <p className="font-display text-4xl font-bold tabular-nums tracking-tight">
                 {trust.reputation.karma}
               </p>
-              <p className="mt-2 text-sm text-slate-500">Circle Karma · private</p>
+              <p className="text-caption mt-1">Circle Karma · private</p>
             </div>
             <div className="pb-1 text-right">
-              <p className="font-display text-lg font-semibold text-slate-900">
-                {trust.reliabilityLabel}
-              </p>
-              <p className="mt-0.5 text-sm text-slate-500">{trust.standingLabel}</p>
+              <p className="text-section text-[1.05rem]">{trust.reliabilityLabel}</p>
+              <p className="text-caption mt-0.5">{trust.standingLabel}</p>
             </div>
           </div>
-          <p className="mt-5 text-[15px] leading-relaxed text-slate-600">
-            {trust.reliabilityMessage}
-          </p>
-          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-            <Link
-              href="/trust"
-              className="font-semibold text-[color:var(--uni-primary,#0f766e)] hover:underline"
-            >
+          <p className="text-body-secondary mt-4 text-sm">{trust.reliabilityMessage}</p>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            <Link href="/trust" className="font-semibold text-[var(--brand-ink)]">
               Full standing
             </Link>
-            <Link href="/trust/rules" className="font-medium text-slate-500 hover:text-slate-800">
+            <Link href="/trust/rules" className="text-[var(--ink-muted)] hover:text-[var(--ink)]">
               Community rules
             </Link>
-            <Link href="/profile" className="font-medium text-slate-500 hover:text-slate-800">
+            <Link href="/profile" className="text-[var(--ink-muted)] hover:text-[var(--ink)]">
               Profile
             </Link>
           </div>
         </section>
-        <section className="card-surface mt-4 p-6">
-          <h2 className="font-display text-xl font-bold">Campus</h2>
-          <p className="mt-2 text-slate-600">
-            See what&apos;s happening around you — communities, plans forming, and
-            people looking to meet up.
+
+        <hr className="hairline" />
+
+        <section>
+          <h2 className="text-section">Campus</h2>
+          <p className="text-body-secondary mt-2">
+            See what people at your school are doing tonight — then turn a post into a plan.
           </p>
-          <button
-            type="button"
-            onClick={() => router.push("/campus")}
-            className="mt-4 inline-flex items-center justify-center rounded-2xl bg-teal-600 px-5 py-3 text-base font-semibold text-white shadow-lg shadow-teal-600/25 hover:bg-teal-700"
-          >
+          <Button className="mt-4" variant="secondary" onClick={() => router.push("/campus")}>
             Open campus
-          </button>
+          </Button>
         </section>
       </main>
     );
@@ -305,7 +289,7 @@ export default function HomePage() {
 
       {nextPlan ? (
         <section className="card-surface mb-6 p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-teal-700">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--brand-ink)]">
             Next Plan
           </p>
           <h3 className="font-display mt-2 text-2xl font-bold">
@@ -376,7 +360,7 @@ export default function HomePage() {
             >
               <span>{item.label}</span>
               {item.done ? (
-                <span className="text-teal-700 font-medium">✓</span>
+                <span className="text-[var(--brand-ink)] font-medium">✓</span>
               ) : (
                 <span className="text-slate-400">·</span>
               )}
@@ -388,7 +372,7 @@ export default function HomePage() {
       <section className="card-surface mb-6 p-5">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-display text-xl font-bold">Circle Strength</h2>
-          <span className="font-display text-2xl font-bold text-teal-700">
+          <span className="font-display text-2xl font-bold text-[var(--brand-ink)]">
             {strength.percent}%
           </span>
         </div>
@@ -413,7 +397,7 @@ export default function HomePage() {
               <span
                 className={
                   stage === strength.stage
-                    ? "font-semibold text-teal-700"
+                    ? "font-semibold text-[var(--brand-ink)]"
                     : STAGE_FLOW.indexOf(strength.stage) > i
                       ? "text-slate-700"
                       : ""
@@ -459,7 +443,7 @@ export default function HomePage() {
                 key={m.mood}
                 type="button"
                 onClick={() => void handleMood(m.mood)}
-                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5 text-left transition hover:border-teal-400 hover:bg-teal-50"
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5 text-left transition hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]"
               >
                 <span className="text-2xl">{m.emoji}</span>
                 <p className="mt-2 font-semibold">{m.label}</p>
@@ -473,7 +457,7 @@ export default function HomePage() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-              className="mb-4 h-10 w-10 rounded-full border-4 border-teal-200 border-t-teal-600"
+              className="mb-4 h-10 w-10 rounded-full border-4 border-[var(--brand-soft)] border-t-[var(--brand)]"
             />
             <p className="font-medium text-slate-700">Checking who&apos;s around...</p>
           </div>
@@ -481,7 +465,7 @@ export default function HomePage() {
 
         {draft ? (
           <div>
-            <p className="text-sm font-medium text-teal-700">
+            <p className="text-sm font-medium text-[var(--brand-ink)]">
               3 people are free right now.
             </p>
             <h4 className="font-display mt-2 text-2xl font-bold">
@@ -530,7 +514,7 @@ export default function HomePage() {
                   onClick={() => setFeedbackEmoji(e)}
                   className={`flex h-14 w-14 items-center justify-center rounded-2xl text-2xl border ${
                     feedbackEmoji === e
-                      ? "border-teal-500 bg-teal-50"
+                      ? "border-[var(--brand)] bg-[var(--brand-soft)]"
                       : "border-slate-200 bg-white"
                   }`}
                 >
@@ -607,7 +591,7 @@ export default function HomePage() {
                     onClick={() => void trust.blockProfile(m.id)}
                   >
                     <span>{m.firstName}</span>
-                    <span className="font-medium text-teal-700">Block</span>
+                    <span className="font-medium text-[var(--brand-ink)]">Block</span>
                   </button>
                 ))}
               </div>
@@ -676,8 +660,7 @@ export default function HomePage() {
             </div>
           </button>
 
-          <p className="flex items-center gap-2 pt-2 text-xs text-slate-400">
-            <Sparkles className="h-3.5 w-3.5" />
+          <p className="pt-2 text-caption">
             University verification · public campus locations only
           </p>
         </div>

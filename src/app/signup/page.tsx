@@ -6,18 +6,19 @@ import { AuthEmailForm } from "@/components/identity/AuthEmailForm";
 
 export default function SignUpPage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-10">
-      <Wordmark />
-      <h1 className="font-display mt-10 text-4xl font-bold">Create your Circle</h1>
-      <p className="mt-2 text-slate-500">
-        Start with your school email. We&apos;ll send one link — clicking it creates your account and signs you in.
+    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-12">
+      <Wordmark size="sm" />
+      <h1 className="text-page-title mt-10">Create your Circle</h1>
+      <p className="text-body-secondary mt-2">
+        Your school email keeps Circle on campus. We&apos;ll send one link —
+        clicking it creates your account and signs you in.
       </p>
-      <div className="card-surface mt-8 p-6">
+      <div className="mt-8">
         <AuthEmailForm mode="signup" />
       </div>
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-8 text-center text-caption">
         Already have an account?{" "}
-        <Link href="/signin" className="font-semibold text-teal-700">
+        <Link href="/signin" className="font-semibold text-[var(--brand-ink)]">
           Sign in
         </Link>
       </p>

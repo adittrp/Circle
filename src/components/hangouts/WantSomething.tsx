@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
@@ -43,39 +42,38 @@ export function WantSomething({
       title="What are you feeling?"
     >
       {!draft && !checking ? (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           {HANGOUT_MOODS.map((m) => (
             <button
               key={m.mood}
               type="button"
               onClick={() => void pick(m.mood)}
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5 text-left transition hover:border-teal-400 hover:bg-teal-50"
+              className="rounded-[var(--radius-sm)] border border-[var(--line)] bg-[var(--bg-elevated)] px-3 py-4 text-left transition-colors hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]"
             >
-              <span className="text-2xl">{m.emoji}</span>
-              <p className="mt-2 font-semibold">{m.label}</p>
+              <span className="text-xl" aria-hidden>
+                {m.emoji}
+              </span>
+              <p className="mt-1.5 text-sm font-semibold">{m.label}</p>
             </button>
           ))}
         </div>
       ) : null}
       {checking ? (
         <div className="flex flex-col items-center py-10 text-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-            className="mb-4 h-10 w-10 rounded-full border-4 border-teal-200 border-t-teal-600"
-          />
-          <p className="font-medium text-slate-700">Checking schedules and campus spots...</p>
+          <div className="skeleton mb-4 h-10 w-10 rounded-full" />
+          <p className="text-label">Checking schedules and campus spots…</p>
         </div>
       ) : null}
       {draft ? (
         <div>
-          <p className="text-sm font-medium text-teal-700">{draft.reason}</p>
-          <h4 className="font-display mt-2 text-2xl font-bold">
-            {draft.emoji} {draft.title}
+          <p className="text-caption font-semibold text-[var(--brand-ink)]">{draft.reason}</p>
+          <h4 className="text-section mt-2">
+            <span aria-hidden>{draft.emoji} </span>
+            {draft.title}
           </h4>
-          <p className="mt-1 text-slate-600">{formatPlanWhen(draft.startTime)}</p>
-          <p className="mt-1 text-sm text-slate-500">{draft.locationLabel}</p>
-          <p className="mt-3 text-sm text-slate-600">{draft.description}</p>
+          <p className="mt-2 text-[var(--ink-secondary)]">{formatPlanWhen(draft.startTime)}</p>
+          <p className="mt-1 text-caption">{draft.locationLabel}</p>
+          <p className="text-body-secondary mt-3 text-sm">{draft.description}</p>
           <Button
             fullWidth
             className="mt-6"

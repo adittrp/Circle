@@ -23,14 +23,14 @@ export function CircleRulesEditor({
             type="button"
             onClick={() => onChange({ ...rules, [opt.key]: !on })}
             className={`flex w-full items-start justify-between gap-3 rounded-2xl border px-4 py-3 text-left ${
-              on ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white"
+              on ? "border-[var(--brand)] bg-[var(--brand-soft)]" : "border-slate-200 bg-white"
             }`}
           >
             <span>
               <span className="block font-medium text-slate-900">{opt.title}</span>
               <span className="text-sm text-slate-500">{opt.description}</span>
             </span>
-            <span className="text-sm font-semibold text-teal-700">{on ? "On" : "Off"}</span>
+            <span className="text-sm font-semibold text-[var(--brand-ink)]">{on ? "On" : "Off"}</span>
           </button>
         );
       })}
@@ -45,7 +45,7 @@ export function CircleRulesEditor({
 
 export function VerifiedBadge({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="inline-flex items-center rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-semibold text-teal-800">
+    <span className="inline-flex items-center rounded-full bg-[var(--brand-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--brand-ink)]">
       {compact ? "Verified" : "University Verified"}
     </span>
   );

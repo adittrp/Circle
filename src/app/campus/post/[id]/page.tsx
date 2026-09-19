@@ -64,7 +64,7 @@ export default function PostDetailPage() {
 
   if (!identity.ready || !profile) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#dae0e6] text-slate-500">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-slate-500">
         Loading…
       </main>
     );
@@ -74,7 +74,7 @@ export default function PostDetailPage() {
     return (
       <main className="mx-auto max-w-xl px-5 py-16">
         <p>{error ?? "Loading post…"}</p>
-        <Link href="/campus" className="mt-4 inline-block text-[#00B84D]">
+        <Link href="/campus" className="mt-4 inline-block text-[var(--brand)]">
           ← Home
         </Link>
       </main>
@@ -85,7 +85,7 @@ export default function PostDetailPage() {
     <CampusShell communities={communities}>
       <div className="space-y-3 pb-20 lg:pb-4">
         {info ? (
-          <p className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+          <p className="rounded-xl border border-[var(--brand-soft)] bg-[var(--brand-soft)] px-4 py-3 text-sm text-[var(--brand-ink)]">
             {info}
           </p>
         ) : null}

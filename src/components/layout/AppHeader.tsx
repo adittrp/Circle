@@ -1,72 +1,74 @@
 "use client";
 
-import { Shield, UserRound, Users } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { useIdentity } from "@/context/IdentityContext";
 
+const PRIMARY_NAV = [
+  { href: "/home", label: "Home" },
+  { href: "/circles", label: "Circles" },
+  { href: "/campus", label: "Campus" },
+  { href: "/people", label: "People" },
+] as const;
+
 export function AppHeader() {
+  const pathname = usePathname();
   const { profile, university, configured } = useIdentity();
   const name = profile?.first_name;
   const onboarded = Boolean(profile?.onboarding_completed_at);
 
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
+
   return (
-    <header className="mb-8 flex items-center justify-between gap-3">
-      <Wordmark href={onboarded ? "/home" : "/"} />
-      <div className="flex items-center gap-2">
-        {configured && onboarded ? (
-          <>
-            <Link
-              href="/campus"
-              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-            >
-              Campus
-            </Link>
-            <Link
-              href="/circles"
-              className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-            >
-              <Users className="h-4 w-4" />
-              Circles
-            </Link>
-          </>
-        ) : null}
-        {university ? (
-          <span
-            className="hidden rounded-full px-3 py-1 text-xs font-semibold sm:inline"
-            style={{
-              background: "color-mix(in srgb, var(--uni-primary, #0d9488) 12%, white)",
-              color: "var(--uni-primary, #0f766e)",
-            }}
-          >
-            {university.abbreviation}
-          </span>
-        ) : null}
-        {configured && name ? (
-          <>
-            <Link
-              href="/people"
-              className="hidden rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 sm:inline"
-            >
-              People
-            </Link>
-            <Link
-              href="/trust"
-              className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm hover:bg-slate-50"
-              aria-label="Your standing"
-            >
-              <Shield className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/profile"
-              className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-            >
-              <UserRound className="h-4 w-4" />
-              {name}
-            </Link>
-          </>
-        ) : null}
+    <header className="mb-6 border-b border-[var(--line)] pb-4">
+      <div className="flex items-center justify-between gap-3">
+        <Wordmark href={onboarded ? "/home" : "/"} size="sm" />
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {university ? (
+            <span className="hidden text-caption font-semibold text-[var(--ink-muted)] sm:inline">
+              {university.abbreviation}
+            </span>
+          ) : null}
+          {configured && name ? (
+            <>
+              <Link
+                href="/trust"
+                className="nav-link hidden sm:inline-flex"
+                data-active={isActive("/trust") ? "true" : "false"}
+              >
+                Standing
+              </Link>
+              <Link
+                href="/profile"
+                className="nav-link"
+                data-active={isActive("/profile") ? "true" : "false"}
+              >
+                {name}
+              </Link>
+            </>
+          ) : null}
+        </div>
       </div>
+
+      {configured && onboarded ? (
+        <nav
+          className="mt-3 -mx-1 flex gap-0.5 overflow-x-auto"
+          aria-label="Primary"
+        >
+          {PRIMARY_NAV.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="nav-link shrink-0"
+              data-active={isActive(item.href) ? "true" : "false"}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
     </header>
   );
 }

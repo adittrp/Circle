@@ -96,7 +96,7 @@ export default function CommunityPage() {
 
   if (!identity.ready || !profile) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#dae0e6] text-slate-500">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-slate-500">
         Loading…
       </main>
     );
@@ -106,7 +106,7 @@ export default function CommunityPage() {
     return (
       <main className="mx-auto max-w-xl px-5 py-16">
         <p className="text-slate-600">{error ?? "Loading community…"}</p>
-        <Link href="/campus" className="mt-4 inline-block text-[#00B84D]">
+        <Link href="/campus" className="mt-4 inline-block text-[var(--brand)]">
           ← Back to Home
         </Link>
       </main>
@@ -170,7 +170,7 @@ export default function CommunityPage() {
                       Joined
                     </Button>
                   ) : (
-                    <span className="rounded-full bg-green-50 px-3 py-2 text-xs font-bold text-[#00B84D]">
+                    <span className="rounded-full bg-[var(--brand-soft)] px-3 py-2 text-xs font-bold text-[var(--brand)]">
                       Auto-joined
                     </span>
                   )
@@ -197,7 +197,7 @@ export default function CommunityPage() {
         </div>
 
         {info ? (
-          <p className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+          <p className="rounded-xl border border-[var(--brand-soft)] bg-[var(--brand-soft)] px-4 py-3 text-sm text-[var(--brand-ink)]">
             {info}
           </p>
         ) : null}
@@ -344,7 +344,7 @@ export default function CommunityPage() {
                 <button
                   type="button"
                   onClick={() => setComposerOpen(true)}
-                  className="mt-3 text-sm font-semibold text-[#00B84D]"
+                  className="mt-3 text-sm font-semibold text-[var(--brand)]"
                 >
                   Be the first to post
                 </button>

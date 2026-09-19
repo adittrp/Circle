@@ -1,27 +1,95 @@
 @import "tailwindcss";
 
+/* ─── Circle design tokens ─────────────────────────────────────────
+   Brand green is the product identity (#00B84D from brand SVGs).
+   Warm neutrals, restrained borders, no decorative gradients.
+─────────────────────────────────────────────────────────────────── */
+
 :root {
-  --bg: #f4f7fb;
+  /* Brand */
+  --brand: #00b84d;
+  --brand-strong: #00963f;
+  --brand-soft: #e8f8ee;
+  --brand-ink: #007a34;
+
+  /* Surfaces */
+  --bg: #f7f6f3;
   --bg-elevated: #ffffff;
-  --ink: #0f172a;
-  --ink-muted: #64748b;
-  --ink-soft: #94a3b8;
-  --accent: #0d9488;
-  --accent-strong: #0f766e;
-  --accent-soft: #ccfbf1;
-  --coral: #f97316;
-  --coral-soft: #ffedd5;
-  --line: #e2e8f0;
-  --shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
-  --shadow-soft: 0 4px 16px -6px rgba(15, 23, 42, 0.12);
-  --radius: 1.25rem;
+  --bg-muted: #efeee9;
+  --bg-sunken: #e8e6e0;
+
+  /* Ink */
+  --ink: #141814;
+  --ink-secondary: #3d433d;
+  --ink-muted: #6b716b;
+  --ink-faint: #9aa09a;
+
+  /* Lines */
+  --line: #e2e0da;
+  --line-strong: #cdcbc3;
+
+  /* Semantic (functional only) */
+  --danger: #c4352a;
+  --danger-soft: #fceceb;
+  --warning: #b86a00;
+  --warning-soft: #fff4e5;
+  --success: #00b84d;
+  --success-soft: #e8f8ee;
+
+  /* University override hooks (UniversityBrand may set these) */
+  --uni-primary: var(--brand);
+  --uni-primary-strong: var(--brand-strong);
+
+  /* Radius scale — 3 values */
+  --radius-sm: 0.375rem; /* 6px — chips, inputs, small controls */
+  --radius-md: 0.75rem; /* 12px — cards, modals, buttons */
+  --radius-lg: 1.25rem; /* 20px — large sheets only */
+
+  /* Shadow — restrained */
+  --shadow-sm: 0 1px 2px rgba(20, 24, 20, 0.05);
+  --shadow-md: 0 4px 16px -4px rgba(20, 24, 20, 0.1);
+
+  /* Spacing rhythm */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+
+  /* Type scale */
+  --text-caption: 0.75rem;
+  --text-label: 0.8125rem;
+  --text-body: 1rem;
+  --text-body-lg: 1.125rem;
+  --text-title: 1.25rem;
+  --text-page: 1.75rem;
+  --text-display: 2.5rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration: 200ms;
+
+  /* Legacy aliases used across the app */
+  --accent: var(--brand);
+  --accent-strong: var(--brand-strong);
+  --accent-soft: var(--brand-soft);
+  --coral: var(--warning);
+  --coral-soft: var(--warning-soft);
+  --radius: var(--radius-md);
+  --shadow: var(--shadow-md);
+  --shadow-soft: var(--shadow-sm);
 }
 
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--ink);
-  --color-accent: var(--accent);
-  --color-coral: var(--coral);
+  --color-accent: var(--brand);
+  --color-brand: var(--brand);
+  --color-coral: var(--warning);
   --font-sans: var(--font-plus-jakarta);
   --font-display: var(--font-outfit);
 }
@@ -34,14 +102,28 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
-  background:
-    radial-gradient(1200px 600px at 10% -10%, #dbeafe 0%, transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, #ccfbf1 0%, transparent 50%),
-    var(--bg);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-size: var(--text-body);
+  line-height: 1.55;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -49,49 +131,213 @@ h2,
 h3,
 .font-display {
   font-family: var(--font-outfit), system-ui, sans-serif;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: var(--ink);
 }
 
 ::selection {
-  background: var(--accent-soft);
-  color: var(--accent-strong);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
 }
 
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Surfaces */
 .card-surface {
   background: var(--bg-elevated);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
+.surface-muted {
+  background: var(--bg-muted);
+  border-radius: var(--radius-md);
+}
+
+.page-shell {
+  width: 100%;
+  max-width: 40rem;
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-4) var(--space-10);
+}
+
+.page-shell-wide {
+  width: 100%;
+  max-width: 56rem;
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-4) var(--space-10);
+}
+
+/* Type roles */
+.text-display {
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  font-size: clamp(2rem, 4vw, var(--text-display));
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.text-page-title {
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  font-size: var(--text-page);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.text-section {
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  font-size: var(--text-title);
+  font-weight: 650;
+}
+
+.text-body-secondary {
+  color: var(--ink-muted);
+  font-size: var(--text-body);
+  line-height: 1.55;
+}
+
+.text-label {
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+
+.text-caption {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  line-height: 1.4;
+}
+
+/* Chips */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border-radius: 999px;
-  padding: 0.4rem 0.85rem;
-  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.75rem;
+  font-size: var(--text-label);
   font-weight: 500;
   border: 1px solid var(--line);
-  background: white;
-  transition: all 0.2s ease;
+  background: var(--bg-elevated);
+  color: var(--ink-secondary);
+  transition:
+    background var(--duration) var(--ease-out),
+    border-color var(--duration) var(--ease-out),
+    color var(--duration) var(--ease-out);
 }
 
 .chip[data-selected="true"] {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent-strong);
+  background: var(--brand-soft);
+  border-color: var(--brand);
+  color: var(--brand-ink);
+  font-weight: 600;
 }
 
+.chip:hover {
+  border-color: var(--line-strong);
+}
+
+/* Progress */
 .progress-track {
-  height: 6px;
+  height: 4px;
   border-radius: 999px;
-  background: #e2e8f0;
+  background: var(--bg-sunken);
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), #2dd4bf);
+  background: var(--brand);
+}
+
+/* Form controls */
+.field-input {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--bg-elevated);
+  padding: 0.75rem 0.9rem;
+  font-size: var(--text-body);
+  color: var(--ink);
+  outline: none;
+  transition:
+    border-color var(--duration) var(--ease-out),
+    box-shadow var(--duration) var(--ease-out);
+}
+
+.field-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+.field-input::placeholder {
+  color: var(--ink-faint);
+}
+
+/* Nav link */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-label);
+  font-weight: 550;
+  color: var(--ink-muted);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+.nav-link:hover {
+  color: var(--ink);
+  background: var(--bg-muted);
+}
+
+.nav-link[data-active="true"] {
+  color: var(--brand-ink);
+  background: var(--brand-soft);
+  font-weight: 650;
+}
+
+/* Skeleton */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-muted) 0%,
+    var(--bg-sunken) 50%,
+    var(--bg-muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--bg-muted);
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* Divider */
+.hairline {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: var(--space-5) 0;
 }

@@ -73,7 +73,7 @@ export default function CircleRevealPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand-ink)]">
             You&apos;re in
           </p>
           <h1 className="font-display mt-2 text-4xl font-extrabold text-slate-900 sm:text-5xl">
@@ -112,7 +112,7 @@ export default function CircleRevealPage() {
           className="card-surface mt-10 p-6"
         >
           <div className="mb-4 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-teal-600" />
+            <Sparkles className="h-5 w-5 text-[var(--brand)]" />
             <h2 className="font-display text-xl font-bold">Why we put you together</h2>
           </div>
           <ul className="space-y-3">
@@ -125,7 +125,7 @@ export default function CircleRevealPage() {
                   transition={{ delay: 0.85 + i * 0.08 }}
                   className="flex items-start gap-3 text-slate-700"
                 >
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand-ink)]">
                     <Check className="h-3.5 w-3.5" />
                   </span>
                   {line}
@@ -173,7 +173,7 @@ export default function CircleRevealPage() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center"
       >
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand-ink)]">
           You&apos;re in
         </p>
         <h1 className="font-display mt-2 text-4xl font-extrabold text-slate-900 sm:text-5xl">
@@ -212,7 +212,7 @@ export default function CircleRevealPage() {
         className="card-surface mt-10 p-6"
       >
         <div className="mb-4 flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-teal-600" />
+          <Sparkles className="h-5 w-5 text-[var(--brand)]" />
           <h2 className="font-display text-xl font-bold">Why we put you together</h2>
         </div>
         <ul className="space-y-3">
@@ -224,7 +224,7 @@ export default function CircleRevealPage() {
               transition={{ delay: 0.85 + i * 0.08 }}
               className="flex items-start gap-3 text-slate-700"
             >
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand-ink)]">
                 <Check className="h-3.5 w-3.5" />
               </span>
               {line}
@@ -245,7 +245,7 @@ export default function CircleRevealPage() {
           <h2 className="font-display mt-3 text-3xl font-bold">
             {firstMission.emoji} {firstMission.title}
           </h2>
-          <p className="mt-2 text-teal-100/90">
+          <p className="mt-2 text-white/90/90">
             {firstMission.dateLabel} · {firstMission.time}
           </p>
           <p className="mt-4 max-w-2xl text-slate-300">{firstMission.reason}</p>

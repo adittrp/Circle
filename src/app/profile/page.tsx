@@ -15,7 +15,7 @@ import {
 } from "@/lib/supabase/database.types";
 
 const fieldClass =
-  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-100";
+  "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none focus:border-[var(--brand)] focus:ring-4 focus:ring-[var(--brand-soft)]";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -195,7 +195,7 @@ export default function ProfilePage() {
           </Button>
         </form>
       </div>
-      {saved ? <p className="mt-3 text-sm text-teal-700">Saved.</p> : null}
+      {saved ? <p className="mt-3 text-sm text-[var(--brand-ink)]">Saved.</p> : null}
     </main>
   );
 }

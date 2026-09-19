@@ -53,10 +53,10 @@ export function CircleChat({
                 <p className="text-xs text-slate-500">{message.body}</p>
               ) : (
                 <div className={`inline-block max-w-[85%] rounded-2xl px-3 py-2 text-left ${
-                  mine ? "bg-teal-600 text-white" : "bg-slate-100 text-slate-800"
+                  mine ? "bg-[var(--brand)] text-white" : "bg-slate-100 text-slate-800"
                 }`}
                 >
-                  <p className={`text-[11px] ${mine ? "text-teal-100" : "text-slate-500"}`}>
+                  <p className={`text-[11px] ${mine ? "text-white/90" : "text-slate-500"}`}>
                     {mine ? "You" : names.get(message.author_id) || "Member"} ·{" "}
                     {new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
                   </p>
@@ -76,7 +76,7 @@ export function CircleChat({
                         type="button"
                         onClick={() => void onReact(message.id, emoji)}
                         className={`rounded-full px-2 py-0.5 text-xs ${
-                          selected ? "bg-teal-50 text-teal-800" : "bg-white text-slate-500"
+                          selected ? "bg-[var(--brand-soft)] text-[var(--brand-ink)]" : "bg-white text-slate-500"
                         } border border-slate-200`}
                       >
                         {emoji}

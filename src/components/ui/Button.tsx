@@ -1,29 +1,40 @@
 "use client";
 
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type Variant = "primary" | "secondary" | "ghost" | "coral";
+type Variant = "primary" | "secondary" | "quiet" | "destructive";
+/** Legacy aliases still used in older screens */
+type LegacyVariant = Variant | "ghost" | "coral";
+type Size = "sm" | "md" | "lg";
 
-const styles: Record<Variant, string> = {
+const variants: Record<Variant, string> = {
   primary:
-    "bg-teal-600 text-white hover:bg-teal-700 shadow-lg shadow-teal-600/25",
+    "bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)] active:bg-[var(--brand-ink)]",
   secondary:
-    "bg-white text-slate-800 border border-slate-200 hover:bg-slate-50 shadow-sm",
-  ghost: "bg-transparent text-slate-600 hover:bg-slate-100",
-  coral:
-    "bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/25",
+    "bg-[var(--bg-elevated)] text-[var(--ink)] border border-[var(--line)] hover:bg-[var(--bg-muted)] active:bg-[var(--bg-sunken)]",
+  quiet:
+    "bg-transparent text-[var(--ink-secondary)] hover:bg-[var(--bg-muted)] active:bg-[var(--bg-sunken)]",
+  destructive:
+    "bg-[var(--danger)] text-white hover:opacity-90 active:opacity-80",
 };
 
-interface ButtonProps {
+const sizes: Record<Size, string> = {
+  sm: "px-3 py-1.5 text-[var(--text-label)]",
+  md: "px-4 py-2.5 text-[var(--text-body)]",
+  lg: "px-5 py-3 text-[var(--text-body-lg)]",
+};
+
+interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   children: ReactNode;
-  variant?: Variant;
-  size?: "sm" | "md" | "lg";
+  variant?: LegacyVariant;
+  size?: Size;
   fullWidth?: boolean;
-  className?: string;
-  disabled?: boolean;
-  type?: "button" | "submit" | "reset";
-  onClick?: () => void;
+}
+
+function resolveVariant(variant: LegacyVariant): Variant {
+  if (variant === "ghost") return "quiet";
+  if (variant === "coral") return "destructive";
+  return variant;
 }
 
 export function Button({
@@ -34,24 +45,29 @@ export function Button({
   className = "",
   disabled,
   type = "button",
-  onClick,
+  ...rest
 }: ButtonProps) {
-  const sizes = {
-    sm: "px-3.5 py-2 text-sm",
-    md: "px-5 py-3 text-base",
-    lg: "px-6 py-4 text-lg",
-  };
-
+  const v = resolveVariant(variant);
   return (
-    <motion.button
+    <button
       type={type}
-      whileTap={disabled ? undefined : { scale: 0.97 }}
-      whileHover={disabled ? undefined : { y: -1 }}
-      className={`inline-flex items-center justify-center gap-2 rounded-2xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${styles[variant]} ${sizes[size]} ${fullWidth ? "w-full" : ""} ${className}`}
       disabled={disabled}
-      onClick={onClick}
+      className={[
+        "inline-flex items-center justify-center gap-2 font-semibold",
+        "rounded-[var(--radius-sm)]",
+        "transition-[background-color,transform,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out)]",
+        "disabled:cursor-not-allowed disabled:opacity-45",
+        "active:translate-y-px",
+        variants[v],
+        sizes[size],
+        fullWidth ? "w-full" : "",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      {...rest}
     >
       {children}
-    </motion.button>
+    </button>
   );
 }

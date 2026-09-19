@@ -141,12 +141,12 @@ export default function PublicStudentPage() {
         </div>
 
         {shared.length ? (
-          <p className="mt-4 text-sm text-teal-700">
+          <p className="mt-4 text-sm text-[var(--brand-ink)]">
             You share {shared.length} interest{shared.length === 1 ? "" : "s"}.
           </p>
         ) : null}
 
-        {message ? <p className="mt-4 text-sm text-teal-700">{message}</p> : null}
+        {message ? <p className="mt-4 text-sm text-[var(--brand-ink)]">{message}</p> : null}
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Button

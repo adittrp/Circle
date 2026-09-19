@@ -34,11 +34,11 @@ export function MemberCard({
         <p className="font-semibold text-slate-900">
           {name}
           {isYou ? (
-            <span className="ml-1 text-xs font-medium text-teal-700">(you)</span>
+            <span className="ml-1 text-xs font-medium text-[var(--brand-ink)]">(you)</span>
           ) : null}
         </p>
         {universityVerified ? (
-          <p className="mt-1 text-[11px] font-semibold text-teal-800">University Verified</p>
+          <p className="mt-1 text-[11px] font-semibold text-[var(--brand-ink)]">University Verified</p>
         ) : null}
         <p className="text-sm text-slate-500">
           {year} · {major}

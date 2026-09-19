@@ -144,7 +144,7 @@ export default function PeoplePage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by name"
-          className="rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-teal-500"
+          className="rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-[var(--brand)]"
         />
         <select
           value={year}
@@ -196,7 +196,7 @@ export default function PeoplePage() {
         </select>
       </div>
 
-      {inviteMsg ? <p className="mt-4 text-sm text-teal-700">{inviteMsg}</p> : null}
+      {inviteMsg ? <p className="mt-4 text-sm text-[var(--brand-ink)]">{inviteMsg}</p> : null}
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {loading ? (

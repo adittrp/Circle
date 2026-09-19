@@ -49,7 +49,7 @@ export default function CampusSearchPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-screen items-center justify-center bg-[#dae0e6] text-slate-500">
+        <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-slate-500">
           Loading search…
         </main>
       }
@@ -100,7 +100,7 @@ function CampusSearchInner() {
 
   if (!identity.ready) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#dae0e6] text-slate-500">
+      <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-slate-500">
         Loading…
       </main>
     );
@@ -127,7 +127,7 @@ function CampusSearchInner() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search communities, people, posts…"
-                className="w-full rounded-full border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-[#00B84D] focus:bg-white"
+                className="w-full rounded-full border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-[var(--brand)] focus:bg-white"
               />
             </div>
             <Button type="submit" disabled={busy || query.trim().length < 2}>
@@ -149,7 +149,7 @@ function CampusSearchInner() {
                     href={`/campus/c/${c.slug}`}
                     className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-slate-50"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#00B84D] text-xs font-bold text-white">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--brand)] text-xs font-bold text-white">
                       {c.name.slice(0, 1)}
                     </span>
                     <div>

@@ -50,7 +50,7 @@ export default function MatchingHarnessPage() {
           Persist match
         </Button>
       </div>
-      <pre className="mt-6 overflow-auto rounded-2xl bg-slate-900 p-4 text-xs text-teal-100">
+      <pre className="mt-6 overflow-auto rounded-2xl bg-slate-900 p-4 text-xs text-white/90">
         {output || "Results will appear here."}
       </pre>
     </main>

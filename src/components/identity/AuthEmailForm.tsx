@@ -64,7 +64,7 @@ export function AuthEmailForm({ mode }: { mode: "signup" | "signin" }) {
       }}
     >
       <label className="block space-y-1.5">
-        <span className="text-sm font-medium text-slate-600">School email</span>
+        <span className="text-label">School email</span>
         <input
           type="email"
           required
@@ -72,18 +72,17 @@ export function AuthEmailForm({ mode }: { mode: "signup" | "signin" }) {
           placeholder="you@utexas.edu"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-100"
+          className="field-input"
         />
       </label>
       {error ? (
-        <p className="rounded-xl bg-orange-50 px-3 py-2 text-sm text-orange-800">{error}</p>
+        <p className="rounded-[var(--radius-sm)] bg-[var(--warning-soft)] px-3 py-2 text-sm text-[var(--warning)]">
+          {error}
+        </p>
       ) : null}
       <Button type="submit" fullWidth size="lg" disabled={loading}>
-        {loading ? "Sending link..." : "Email me a sign-in link"}
+        {loading ? "Sending link…" : "Email me a sign-in link"}
       </Button>
-      <p className="text-center text-xs text-slate-500">
-        We only accept .edu addresses. One email, one link — clicking it signs you in.
-      </p>
     </form>
   );
 }
