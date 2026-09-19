@@ -1,6 +1,6 @@
 "use client";
 
-import { UserRound } from "lucide-react";
+import { Shield, UserRound } from "lucide-react";
 import Link from "next/link";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { useIdentity } from "@/context/IdentityContext";
@@ -31,6 +31,13 @@ export function AppHeader() {
               className="hidden rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 sm:inline"
             >
               People
+            </Link>
+            <Link
+              href="/trust"
+              className="rounded-full border border-slate-200 bg-white p-2 text-slate-600 shadow-sm hover:bg-slate-50"
+              aria-label="Your standing"
+            >
+              <Shield className="h-4 w-4" />
             </Link>
             <Link
               href="/profile"

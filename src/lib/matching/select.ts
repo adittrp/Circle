@@ -24,6 +24,7 @@ export interface SelectOptions {
   maxCombinations?: number;
   preferredIds?: string[];
   isDemo?: boolean;
+  excludedIds?: Iterable<string>;
 }
 
 /**
@@ -41,10 +42,12 @@ export function selectCircleCompanions(
     options.companionCount ?? targetCompanionCount(seeker.groupSize);
   const shortlistSize = options.shortlistSize ?? 16;
   const maxCombinations = options.maxCombinations ?? 2000;
+  const excluded = new Set(options.excludedIds ?? []);
+  const eligible = pool.filter((p) => !excluded.has(p.id) && p.id !== seeker.id);
 
   if (options.isDemo && options.preferredIds?.length) {
     const preferred = options.preferredIds
-      .map((id) => pool.find((p) => p.id === id))
+      .map((id) => eligible.find((p) => p.id === id))
       .filter((p): p is MatchCandidate => Boolean(p));
     if (preferred.length === companionCount) {
       const breakdown = scoreGroup(seeker, preferred, weights);
@@ -57,7 +60,7 @@ export function selectCircleCompanions(
         breakdown,
         pairScores,
         why: generateWhyTogether(seeker, preferred),
-        eligibleCount: pool.length,
+        eligibleCount: eligible.length,
         shortlistCount: preferred.length,
         combinationsEvaluated: 1,
         runtimeMs: performance.now() - started,
@@ -66,7 +69,7 @@ export function selectCircleCompanions(
     }
   }
 
-  const sameUni = pool.filter((p) => p.universityId === seeker.universityId);
+  const sameUni = eligible.filter((p) => p.universityId === seeker.universityId);
   const ranked = sameUni
     .map((s) => scorePair(seeker, s, weights))
     .sort((a, b) => b.score - a.score);

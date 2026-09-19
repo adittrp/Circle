@@ -91,7 +91,8 @@ export function scoreGroupDemo(user: User, members: StudentProfile[]): number {
 export function matchCircle(
   user: User,
   pool: StudentProfile[],
-  groupSize = 4
+  groupSize = 4,
+  options?: { excludedIds?: Iterable<string> }
 ): StudentProfile[] {
   const seeker = userToCandidate(user);
   const candidates = pool.map((p) => studentToCandidate(p));
@@ -99,6 +100,7 @@ export function matchCircle(
     companionCount: groupSize,
     isDemo: user.isDemo,
     preferredIds: ["s01", "s02", "s03", "s08"],
+    excludedIds: options?.excludedIds,
   });
   const byId = new Map(pool.map((p) => [p.id, p]));
   return result.companions.map((c) => byId.get(c.id)!).filter(Boolean);

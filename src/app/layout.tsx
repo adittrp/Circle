@@ -5,6 +5,7 @@ import { UniversityBrand } from "@/components/identity/UniversityBrand";
 import { DemoProvider } from "@/context/DemoContext";
 import { IdentityProvider } from "@/context/IdentityContext";
 import { RealCircleProvider } from "@/context/RealCircleContext";
+import { TrustProvider } from "@/context/TrustContext";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -39,9 +40,11 @@ export default function RootLayout({
         <IdentityProvider>
           <UniversityBrand>
             <IdentityGate>
-              <RealCircleProvider>
-                <DemoProvider>{children}</DemoProvider>
-              </RealCircleProvider>
+              <TrustProvider>
+                <RealCircleProvider>
+                  <DemoProvider>{children}</DemoProvider>
+                </RealCircleProvider>
+              </TrustProvider>
             </IdentityGate>
           </UniversityBrand>
         </IdentityProvider>

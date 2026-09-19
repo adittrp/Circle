@@ -10,6 +10,7 @@ import {
   Shield,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
@@ -18,9 +19,12 @@ import { MemberCard } from "@/components/ui/MemberCard";
 import { Modal } from "@/components/ui/Modal";
 import { ProgressBar } from "@/components/ui/Progress";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { CircleRulesEditor } from "@/components/trust/CircleRulesEditor";
+import { LeaveCircleModal, ReportModal } from "@/components/trust/SafetyModals";
 import { useDemo } from "@/context/DemoContext";
 import { useIdentity } from "@/context/IdentityContext";
 import { useRealCircle } from "@/context/RealCircleContext";
+import { useTrust } from "@/context/TrustContext";
 import { computeCircleStrength, STAGE_FLOW } from "@/lib/circleStrength";
 import { DEMO_USER_ID } from "@/lib/constants";
 import type { Activity, ActivityMood, FeedbackEmoji, HangAgain } from "@/lib/types";
@@ -50,6 +54,7 @@ export default function HomePage() {
     state,
     user,
     displayMembers,
+    circleMembers,
     setRsvp,
     requestSpontaneous,
     startPlan,
@@ -57,10 +62,15 @@ export default function HomePage() {
     completeActivity,
     resetDemo,
     requestReshuffle,
+    leaveDemoCircle,
   } = useDemo();
+  const trust = useTrust();
 
   const [wantOpen, setWantOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportTarget, setReportTarget] = useState<{ id: string; name: string } | null>(null);
   const [checking, setChecking] = useState(false);
   const [draft, setDraft] = useState<Activity | null>(null);
   const [feedbackEmoji, setFeedbackEmoji] = useState<FeedbackEmoji | null>(null);
@@ -104,6 +114,11 @@ export default function HomePage() {
     }
   }, [ready, state.circle, state.phase, router, identity.configured, identity.profile]);
 
+  const loadCircleRules = trust.loadCircleRules;
+  useEffect(() => {
+    if (state.circle?.id) void loadCircleRules(state.circle.id);
+  }, [state.circle?.id, loadCircleRules]);
+
   const firstName =
     identity.profile?.first_name || user?.profile.firstName || "there";
 
@@ -125,7 +140,15 @@ export default function HomePage() {
     }
     const hasRealCircle = Boolean(real.circle);
     return (
-      <main className="mx-auto max-w-3xl px-5 py-6 sm:px-8">
+      <main className="relative mx-auto min-h-screen max-w-xl px-5 pb-16 pt-6 sm:px-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[22rem]"
+          style={{
+            background:
+              "radial-gradient(ellipse 90% 60% at 30% -5%, color-mix(in srgb, var(--uni-primary, #0d9488) 16%, transparent), transparent 70%)",
+          }}
+        />
         <AppHeader />
         <p className="text-sm text-slate-500">{greeting()},</p>
         <h1 className="font-display text-3xl font-bold text-slate-900">{firstName}.</h1>
@@ -162,6 +185,41 @@ export default function HomePage() {
             </div>
           </section>
         )}
+
+        <section className="mt-10 border-t border-slate-200/80 pt-8">
+          <p className="text-[13px] font-medium text-slate-400">Your standing</p>
+          <div className="mt-4 flex items-end justify-between gap-6">
+            <div>
+              <p className="font-display text-5xl font-bold tabular-nums tracking-tight text-slate-900">
+                {trust.reputation.karma}
+              </p>
+              <p className="mt-2 text-sm text-slate-500">Circle Karma · private</p>
+            </div>
+            <div className="pb-1 text-right">
+              <p className="font-display text-lg font-semibold text-slate-900">
+                {trust.reliabilityLabel}
+              </p>
+              <p className="mt-0.5 text-sm text-slate-500">{trust.standingLabel}</p>
+            </div>
+          </div>
+          <p className="mt-5 text-[15px] leading-relaxed text-slate-600">
+            {trust.reliabilityMessage}
+          </p>
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            <Link
+              href="/trust"
+              className="font-semibold text-[color:var(--uni-primary,#0f766e)] hover:underline"
+            >
+              Full standing
+            </Link>
+            <Link href="/trust/rules" className="font-medium text-slate-500 hover:text-slate-800">
+              Community rules
+            </Link>
+            <Link href="/profile" className="font-medium text-slate-500 hover:text-slate-800">
+              Profile
+            </Link>
+          </div>
+        </section>
       </main>
     );
   }
@@ -217,6 +275,7 @@ export default function HomePage() {
               dorm={m.dorm}
               interests={m.interests}
               isYou={"isYou" in m && m.isYou}
+              universityVerified={"isYou" in m && m.isYou && trust.universityVerified}
             />
           ))}
         </div>
@@ -242,13 +301,25 @@ export default function HomePage() {
               {Object.keys(nextPlan.rsvps).length} confirmed
             </p>
             {nextPlan.rsvps[DEMO_USER_ID] === "in" ? (
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => completeActivity(nextPlan.id)}
-              >
-                Mark done
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => completeActivity(nextPlan.id)}
+                >
+                  I went
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    void trust.recordKarma("no_show", `noshow:${nextPlan.id}`);
+                    setRsvp(nextPlan.id, "cant");
+                  }}
+                >
+                  Missed it
+                </Button>
+              </div>
             ) : null}
           </div>
           <div className="mt-4 flex gap-2">
@@ -486,9 +557,65 @@ export default function HomePage() {
             </Button>
           </div>
 
+          <div className="rounded-2xl border border-slate-200 p-4">
+            <p className="font-semibold">Circle rules</p>
+            <p className="mt-1 text-sm text-slate-500">
+              Extra boundaries for this group. The Social Coordinator will follow them.
+            </p>
+            <div className="mt-3">
+              <CircleRulesEditor
+                rules={trust.circleRules}
+                onChange={(next) => {
+                  void trust.saveCircleRules(state.circle?.id ?? "demo", next);
+                }}
+              />
+            </div>
+          </div>
+
+          {circleMembers.length ? (
+            <div className="rounded-2xl border border-slate-200 p-4">
+              <p className="font-semibold">Block someone</p>
+              <p className="mt-1 text-sm text-slate-500">They won&apos;t be told, and they won&apos;t be matched with you again.</p>
+              <div className="mt-3 space-y-2">
+                {circleMembers.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    className="flex w-full items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm"
+                    onClick={() => void trust.blockProfile(m.id)}
+                  >
+                    <span>{m.firstName}</span>
+                    <span className="font-medium text-teal-700">Block</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <Link
+            href="/trust"
+            className="flex w-full items-center gap-3 rounded-2xl border border-slate-200 p-4 text-left hover:bg-slate-50"
+            onClick={() => setSettingsOpen(false)}
+          >
+            <Shield className="h-5 w-5 text-slate-500" />
+            <div>
+              <p className="font-medium">Your standing</p>
+              <p className="text-sm text-slate-500">Karma, reliability, and community rules</p>
+            </div>
+          </Link>
+
           <button
             type="button"
             className="flex w-full items-center gap-3 rounded-2xl border border-slate-200 p-4 text-left hover:bg-slate-50"
+            onClick={() => {
+              const other = displayMembers.find((m) => !("isYou" in m && m.isYou));
+              setReportTarget({
+                id: other?.id ?? "unknown",
+                name: other?.firstName ?? "a member",
+              });
+              setSettingsOpen(false);
+              setReportOpen(true);
+            }}
           >
             <Shield className="h-5 w-5 text-slate-500" />
             <div>
@@ -500,6 +627,10 @@ export default function HomePage() {
           <button
             type="button"
             className="flex w-full items-center gap-3 rounded-2xl border border-slate-200 p-4 text-left hover:bg-slate-50"
+            onClick={() => {
+              setSettingsOpen(false);
+              setLeaveOpen(true);
+            }}
           >
             <Flag className="h-5 w-5 text-slate-500" />
             <div>
@@ -529,6 +660,30 @@ export default function HomePage() {
           </p>
         </div>
       </Modal>
+
+      <ReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        subjectId={reportTarget?.id ?? ""}
+        subjectName={reportTarget?.name ?? "this student"}
+      />
+      <LeaveCircleModal
+        open={leaveOpen}
+        onClose={() => setLeaveOpen(false)}
+        onReport={() => {
+          setLeaveOpen(false);
+          const other = displayMembers.find((m) => !("isYou" in m && m.isYou));
+          setReportTarget({
+            id: other?.id ?? "unknown",
+            name: other?.firstName ?? "a member",
+          });
+          setReportOpen(true);
+        }}
+        onLeft={() => {
+          setLeaveOpen(false);
+          leaveDemoCircle();
+        }}
+      />
     </main>
   );
 }

@@ -68,14 +68,23 @@ Users can insert a circle for their own university and manage their own membersh
 | `posts` | Campus discussion. `source_url` reserved for a later extension. `suggested_activity_id` is the post→plan stub |
 | `messages` | Chat. Exactly one of `circle_id` **or** `community_id` must be set |
 
-## Path 4 — Trust / safety (empty, ready)
+## Path 4 — Trust / safety
 
 | Object | Purpose |
 | --- | --- |
-| `blocks` | Unique pair, no self-block. Users manage their own blocks |
-| `reports` | Reporter can insert/select their reports. Subject may be a profile, circle, or activity |
-| `karma_events` | Reliability events: `rsvp_kept`, `no_show`, `meetup_completed`. **Not a scientific friendship score** |
-| `profile_verifications` | Stub. `.edu` signup already writes `edu_email` |
+| `blocks` | Unique pair, no self-block. Users manage **their own** blocks. Blocked people are not notified. |
+| `reports` | Reporter insert/select only. Subject never sees the row. Moderators can review. Category enum + optional details. A report does **not** change Karma. |
+| `karma_events` | Private reliability events. Product name: **Circle Karma**. View alias: `reputation_events`. |
+| `user_reputation` | Private aggregate (karma, RSVP counts, standing). Owner read only. |
+| `moderation_actions` | Safety-team only. Confirmed actions may write karma. |
+| `circle_rules` | Structured Circle boundaries (no drinking, public campus, etc.) for matching/activity generation. |
+| `profile_verifications` | `.edu` signup writes `edu_email`. Shown as **University Verified**. |
+| `user_verifications` | Optional identity-provider statuses (`unverified` / `pending` / `verified` / `failed`). Mock provider never fakes success. |
+| `safety_acknowledgements` | Code of Conduct agreement during onboarding. |
+| `activity_attendance` | Self-marked attended / no-show. |
+| `circle_leave_feedback` | Private leave reasons. |
+| `public_trust_badges` | Public **university_verified** only — never a numeric score. |
+| RPCs | `record_own_karma_event`, `apply_moderation_action`, `filter_match_candidates`, `leave_circle` |
 
 ## What not to query
 

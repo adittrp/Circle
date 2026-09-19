@@ -89,6 +89,9 @@ export function AuthEmailForm({ mode }: { mode: "signup" | "signin" }) {
 }
 
 function humanAuthError(message: string) {
+  if (/email rate limit exceeded|over_email_send_rate_limit/i.test(message)) {
+    return "Circle's built-in email sender is paused for about an hour. The whole team shares a small hourly cap — wait, then send one link. Don't keep retrying.";
+  }
   if (/signups not allowed for otp/i.test(message)) {
     return "No Circle account exists for that email yet. Open Sign up and send a new sign-in link.";
   }
