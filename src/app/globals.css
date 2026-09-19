@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f4f7fb;
+  --bg-elevated: #ffffff;
+  --ink: #0f172a;
+  --ink-muted: #64748b;
+  --ink-soft: #94a3b8;
+  --accent: #0d9488;
+  --accent-strong: #0f766e;
+  --accent-soft: #ccfbf1;
+  --coral: #f97316;
+  --coral-soft: #ffedd5;
+  --line: #e2e8f0;
+  --shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
+  --shadow-soft: 0 4px 16px -6px rgba(15, 23, 42, 0.12);
+  --radius: 1.25rem;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-accent: var(--accent);
+  --color-coral: var(--coral);
+  --font-sans: var(--font-plus-jakarta);
+  --font-display: var(--font-outfit);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #dbeafe 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #ccfbf1 0%, transparent 50%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  letter-spacing: -0.03em;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.card-surface {
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--line);
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.chip[data-selected="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.progress-track {
+  height: 6px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), #2dd4bf);
+}
