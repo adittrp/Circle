@@ -1,6 +1,6 @@
 "use client";
 
-import { Shield, UserRound } from "lucide-react";
+import { Shield, UserRound, Users } from "lucide-react";
 import Link from "next/link";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { useIdentity } from "@/context/IdentityContext";
@@ -12,15 +12,24 @@ export function AppHeader() {
 
   return (
     <header className="mb-8 flex items-center justify-between gap-3">
-      <Wordmark />
+      <Wordmark href={onboarded ? "/home" : "/"} />
       <div className="flex items-center gap-2">
         {configured && onboarded ? (
-          <Link
-            href="/campus"
-            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-          >
-            Campus
-          </Link>
+          <>
+            <Link
+              href="/campus"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            >
+              Campus
+            </Link>
+            <Link
+              href="/circles"
+              className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            >
+              <Users className="h-4 w-4" />
+              Circles
+            </Link>
+          </>
         ) : null}
         {university ? (
           <span

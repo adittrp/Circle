@@ -12,7 +12,7 @@ RLS helpers live in the **`private`** schema (`current_profile_id`, `current_uni
 | --- | --- | --- |
 | Path 1 | Identity / campus catalog | Path 1 |
 | Path 2 | Matching | Matching RPCs + circle explainability columns |
-| Path 3 | Private Circles + hangouts | Circles / activities / messages |
+| Path 3 | Private Circles + hangouts | Circles / activities / messages / hangout RPCs |
 | **Path 4** | **Campus communities & public groups** | Communities / posts / notifications |
 | Path 5 | Trust / safety | Blocks, reports, Karma, verifications |
 
@@ -52,21 +52,29 @@ Production matching excludes `is_synthetic` unless the pool is too small (or `NE
 
 Routes: `/people`, `/people/[id]`, `/matching` (real + demo), `/circle` reveal, `/dev/matching` harness (dev only). APIs under `/api/matching/*`.
 
-Path 3 should consume `get_my_active_circle` / `circles` + `circle_members` — do not rebuild matching.
+Path 3 consumes the same `circles` / `circle_members` rows via `/circles/[id]` — do not rebuild matching.
 
-## Path 3 — Circles / activities / hangouts
+## Path 3 — Circles / hangouts
 
-The **circle** is the persistent object, not a 1:1 match.
+The **circle** is the persistent object, not a 1:1 match. Matching, Campus post→Circle, and hangout bootstrap all write the same tables.
 
 | Object | Purpose |
 | --- | --- |
 | `circles` | Group on a campus; optional `title` / `source_post_id` when created from a campus post |
 | `circle_members` | Membership. Partial unique `(circle_id, profile_id)` while `left_at` is null |
-| `activities` | Plans owned by a circle. Optional `campus_location_id` + `location_label` |
-| `activity_rsvps` | Own RSVP: `pending` / `in` / `cant` |
-| `activity_feedback` | Rate the **hang**, never other people |
+| `activities` | Plans owned by a circle. Optional `campus_location_id` + `location_label`. `mood = 'first_mission'` is unique per circle while not cancelled |
+| `activity_rsvps` | Own RSVP: `pending` / `in` / `maybe` / `cant` |
+| `activity_feedback` | Rate the **hang**, never other people. Circle members can read hang feedback to steer suggestions |
 | `matching_rounds` | Optional batch-matching stub |
-| `messages` | Chat for **Circles** (membership-gated; prefer posts for large communities) |
+| `messages` | Circle chat. `is_system` for join/plan/RSVP/nudge copy. Exactly one of `circle_id` or `community_id` |
+| `message_reactions` | Optional emoji reactions on chat |
+| `create_hangout_circle(university_id)` | Creates circle + first membership atomically (needed because `INSERT … RETURNING` must pass SELECT RLS before membership exists) |
+
+Realtime: `messages`, `activities`, `activity_rsvps`, `message_reactions`.
+
+Select note: creators can read circles where `formed_by = current_profile_id()` so `INSERT … RETURNING` works before membership exists. `circle_rules` is consumed when Path 5 wrote a row — hangouts do not own that table.
+
+Routes: `/circles`, `/circles/[id]`, `/circles/join/[id]` (auth required).
 
 ## Path 4 — Campus communities (product)
 
@@ -128,8 +136,8 @@ Reports may include `post_id` / `community_id` hooks for Path 5.
 
 - Magic link + OTP via `@supabase/ssr` cookies
 - Next.js 16 `src/proxy.ts` (not `middleware.ts`)
-- Unauthenticated `/onboarding`, `/home`, `/profile`, `/campus`, `/people`, `/trust`, `/dev/matching` → `/signin`
+- Unauthenticated `/onboarding`, `/home`, `/profile`, `/campus`, `/people`, `/trust`, `/circles`, `/dev/matching` → `/signin`
 - Authenticated incomplete → `/onboarding`
 - Authenticated complete → `/home`
 - `/matching` and `/circle` stay open for the Path 2 demo; authenticated onboarded users use real matching
-- `/people`, `/dev/matching`, `/trust`, and `/campus` require auth + completed onboarding
+- `/people`, `/dev/matching`, `/trust`, `/campus`, and `/circles` require auth + completed onboarding

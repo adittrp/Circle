@@ -6,7 +6,7 @@ Circle places students into small groups and helps turn introductions into actua
 
 - **Path 1** — identity, `.edu` auth, campus catalog, onboarding
 - **Path 2** — matching / Circles (demo matching still runs offline)
-- **Path 3** — private Circles / hangouts (schema ready; chat/plans next)
+- **Path 3** — Circles & hangouts: plans, RSVPs, chat, first mission, Circle Momentum (`/circles`)
 - **Path 4** — Campus communities & public groups (`/campus`)
 - **Path 5** — Trust & Safety: private Circle Karma, blocks, reports, Code of Conduct, Circle rules (`/trust`)
 
@@ -35,6 +35,20 @@ After onboarding, open **`/campus`**:
 - Post → Plan and Post → Circle (writes real `circles` / `activities`)
 - In-app notifications
 
+## Circles & hangouts
+
+After matching (or starting a hangout Circle), open **`/circles`**:
+
+1. Start or join a Circle (`/circles`, invite link `/circles/join/[id]`)
+2. First mission is generated from availability + campus locations
+3. RSVP · create a plan · **I want to do something**
+4. Chat is secondary; system messages log joins and new plans
+5. Mark a plan done → hang feedback → Circle Momentum
+
+`create_hangout_circle(university_id)` creates the circle + first membership atomically. Creators can also `SELECT` rows where `formed_by = current_profile_id()`.
+
+Matched Circles from Path 2 and Circles created from Campus posts use the same `circles` / `circle_members` tables and open in `/circles/[id]`.
+
 ## Environment
 
 | Variable | Where | Purpose |
@@ -54,7 +68,8 @@ Do not commit `.env.local`.
 4. `/home` — real users stay here even with no demo circle
 5. `/profile` to edit visibility and sign out
 6. `/campus` — university-scoped communities and groups
-7. `/trust` — private Karma, reliability, verification, blocks, community rules
+7. `/circles` — hangouts, plans, RSVPs, chat
+8. `/trust` — private Karma, reliability, verification, blocks, community rules
 
 Matching UI at `/matching` and `/circle` supports **real Supabase matching** for onboarded users and keeps the **localStorage demo** when Supabase is off / demo onboarding is used. Discover students at `/people`.
 
@@ -71,13 +86,13 @@ npm run seed:test -- 100         # optional synthetic students; is_synthetic = t
 npm run seed:test -- 1000 ut-austin
 ```
 
-Developer matching harness (local only): `/dev/matching`. Trust & Safety UI: `/trust`. Campus: `/campus`.
+Developer matching harness (local only): `/dev/matching`. Trust & Safety UI: `/trust`. Campus: `/campus`. Circles: `/circles`.
 
 ## Schema
 
 Full table map, ownership, and “do not query” notes: **[SCHEMA.md](./SCHEMA.md)**.
 
-Path 2 handoff for Path 3: consume `get_my_active_circle()`, then build chat/plans on `circles` / `circle_members` / `activities`.
+Path 2 handoff for Path 3: consume `get_my_active_circle()` / `circle_members`, then build chat/plans on `circles` / `activities` via `/circles/[id]`.
 
 Campus (product Path 4): `sync_my_communities`, `create_campus_group`, `create_plan_from_post`, `create_circle_from_post`, `campus_search`.
 

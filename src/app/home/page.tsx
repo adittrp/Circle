@@ -157,14 +157,19 @@ export default function HomePage() {
           <section className="card-surface mt-8 p-6">
             <h2 className="font-display text-xl font-bold">Your Circle</h2>
             <p className="mt-2 text-slate-600">
-              You&apos;re in a group of {real.circle.members.length}. Path 3 will own chat and hangouts —
-              for now, revisit your reveal or discover more people.
+              You&apos;re in a group of {real.circle.members.length}. Open Hangouts for plans,
+              RSVPs, and chat — or revisit your reveal.
             </p>
             {real.circle.whyTogether[0] ? (
               <p className="mt-3 text-sm text-slate-500">{real.circle.whyTogether[0]}</p>
             ) : null}
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <Button onClick={() => router.push("/circle")}>Meet your Circle</Button>
+              <Button onClick={() => router.push(`/circles/${real.circle!.id}`)}>
+                Open Hangouts
+              </Button>
+              <Button variant="secondary" onClick={() => router.push("/circle")}>
+                Meet your Circle
+              </Button>
               <Button variant="secondary" onClick={() => router.push("/people")}>
                 Discover people
               </Button>
@@ -179,6 +184,9 @@ export default function HomePage() {
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Button onClick={() => router.push("/matching")}>Find My Circle</Button>
+              <Button variant="secondary" onClick={() => router.push("/circles")}>
+                My Circles
+              </Button>
               <Button variant="secondary" onClick={() => router.push("/people")}>
                 Browse people
               </Button>

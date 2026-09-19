@@ -17,7 +17,11 @@ export function IdentityGate({ children }: { children: ReactNode }) {
       if (
         pathname.startsWith("/home") ||
         pathname.startsWith("/profile") ||
-        pathname.startsWith("/trust")
+        pathname.startsWith("/trust") ||
+        pathname.startsWith("/people") ||
+        pathname.startsWith("/campus") ||
+        pathname.startsWith("/circles") ||
+        pathname.startsWith("/dev/matching")
       ) {
         router.replace("/onboarding");
       }

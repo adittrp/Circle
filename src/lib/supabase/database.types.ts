@@ -2415,6 +2415,10 @@ export type Database = {
         }
         Returns: string
       }
+      create_hangout_circle: {
+        Args: { p_university_id: string }
+        Returns: Database["public"]["Tables"]["circles"]["Row"]
+      }
       create_circle_from_post: {
         Args: { p_post_id: string; p_title?: string }
         Returns: Json
@@ -2572,7 +2576,7 @@ export type Database = {
         | "resolved"
         | "dismissed"
         | "confirmed"
-      rsvp_status: "pending" | "in" | "cant"
+      rsvp_status: "pending" | "in" | "cant" | "maybe"
       verification_method: "edu_email" | "identity_provider"
       verification_status: "unverified" | "pending" | "verified" | "failed"
       year_level: "Freshman" | "Sophomore" | "Junior" | "Senior" | "Graduate"
@@ -2777,7 +2781,7 @@ export const Constants = {
         "dismissed",
         "confirmed",
       ],
-      rsvp_status: ["pending", "in", "cant"],
+      rsvp_status: ["pending", "in", "cant", "maybe"],
       verification_method: ["edu_email", "identity_provider"],
       verification_status: ["unverified", "pending", "verified", "failed"],
       year_level: ["Freshman", "Sophomore", "Junior", "Senior", "Graduate"],
@@ -2833,6 +2837,19 @@ export type Profile = Omit<ProfileRow, "visibility" | "email"> & {
 };
 export type UserAvailability = Database["public"]["Tables"]["user_availability"]["Row"];
 export type UserPreferences = Database["public"]["Tables"]["user_preferences"]["Row"];
+
+export type RsvpStatus = Database["public"]["Enums"]["rsvp_status"];
+export type HangAgain = Database["public"]["Enums"]["hang_again"];
+export type ActivityStatus = Database["public"]["Enums"]["activity_status"];
+export type CircleRow = Database["public"]["Tables"]["circles"]["Row"];
+export type CircleMemberRow = Database["public"]["Tables"]["circle_members"]["Row"];
+export type ActivityRow = Database["public"]["Tables"]["activities"]["Row"];
+export type ActivityRsvpRow = Database["public"]["Tables"]["activity_rsvps"]["Row"];
+export type ActivityFeedbackRow = Database["public"]["Tables"]["activity_feedback"]["Row"];
+export type MessageRow = Database["public"]["Tables"]["messages"]["Row"];
+export type MessageReactionRow = Database["public"]["Tables"]["message_reactions"]["Row"];
+export type CircleRulesRow = Database["public"]["Tables"]["circle_rules"]["Row"];
+export type StudentDirectoryRow = Database["public"]["Views"]["student_directory"]["Row"];
 
 export type PostIntent = Database["public"]["Enums"]["post_intent"];
 export type NotificationKind = Database["public"]["Enums"]["notification_kind"];
