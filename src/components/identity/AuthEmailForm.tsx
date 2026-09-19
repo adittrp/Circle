@@ -27,7 +27,8 @@ export function AuthEmailForm({ mode }: { mode: "signup" | "signin" }) {
     }
     setLoading(true);
     const supabase = createClient();
-    const site = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    // Prefer the live origin so preview/deploy hosts don't send magic links to a stale SITE_URL.
+    const site = window.location.origin;
     const normalized = email.trim().toLowerCase();
     const sendOtp = (createUser: boolean) =>
       supabase.auth.signInWithOtp({

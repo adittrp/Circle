@@ -1,57 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import type { EmailOtpType } from "@supabase/supabase-js";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
-function CallbackBody() {
+/**
+ * Finishes hash-fragment magic links (#access_token=...). Query-param links are
+ * handled by /auth/callback/route.ts.
+ */
+function ContinueBody() {
   const params = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const handled = useRef(false);
 
   useEffect(() => {
+    if (handled.current) return;
+    handled.current = true;
+
     const finish = async () => {
       if (!isSupabaseConfigured()) {
         setError("Supabase is not configured.");
         return;
       }
 
-      const supabase = createClient();
       const next = params.get("next") || "/onboarding";
       const destination = next.startsWith("/") ? next : "/onboarding";
-      const token_hash = params.get("token_hash") ?? params.get("token");
-      const type = (params.get("type") ?? "email") as EmailOtpType;
-      const code = params.get("code");
+      const supabase = createClient();
 
-      let authError: { message: string } | null = null;
-
-      if (token_hash) {
-        const result = await supabase.auth.verifyOtp({ token_hash, type });
-        authError = result.error;
-      } else if (code) {
-        const result = await supabase.auth.exchangeCodeForSession(code);
-        authError = result.error;
-      } else {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        if (user) {
+      const hash = window.location.hash.replace(/^#/, "");
+      if (hash.includes("access_token")) {
+        const hashParams = new URLSearchParams(hash);
+        const access_token = hashParams.get("access_token");
+        const refresh_token = hashParams.get("refresh_token");
+        if (access_token && refresh_token) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token,
+            refresh_token,
+          });
+          if (sessionError) {
+            setError(sessionError.message);
+            return;
+          }
           window.location.replace(destination);
           return;
         }
-        setError("This sign-in link is missing its token. Request a new one.");
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        window.location.replace(destination);
         return;
       }
 
-      if (authError) {
-        setError(authError.message);
-        return;
-      }
-
-      window.location.replace(destination);
+      setError("This sign-in link is missing its token. Request a new one.");
     };
 
     void finish();
@@ -79,7 +85,7 @@ function CallbackBody() {
   );
 }
 
-export default function AuthCallbackPage() {
+export default function AuthContinuePage() {
   return (
     <Suspense
       fallback={
@@ -88,7 +94,7 @@ export default function AuthCallbackPage() {
         </main>
       }
     >
-      <CallbackBody />
+      <ContinueBody />
     </Suspense>
   );
 }
