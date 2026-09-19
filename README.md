@@ -2,7 +2,11 @@
 
 College friendships that actually happen.
 
-Circle places students into small groups and helps turn introductions into actual plans. This repo currently owns **Path 1** (identity, `.edu` auth, campus catalog, onboarding). Paths 2–4 have empty-but-ready tables — see [SCHEMA.md](./SCHEMA.md).
+Circle places students into small groups and helps turn introductions into actual plans.
+
+- **Path 1** — identity, `.edu` auth, campus catalog, onboarding
+- **Path 2** — people discovery and matching (demo matching still at `/matching`)
+- **Path 3** — Circles & hangouts: plans, RSVPs, chat, first mission, Circle Momentum
 
 ## Quick start
 
@@ -35,7 +39,21 @@ Do not commit `.env.local`.
 4. `/home` — real users stay here even with no demo circle
 5. `/profile` to edit visibility and sign out
 
-Matching UI at `/matching` and `/circle` is still the localStorage demo.
+Matching UI at `/matching` and `/circle` is still the localStorage demo (Path 2).
+
+## Path 3 hangouts
+
+After onboarding, `/home` and `/circles` load real membership, plans, RSVPs, and chat from Supabase.
+
+1. Start or join a Circle (`/circles`, invite link `/circles/join/[id]`)
+2. First mission is generated from availability + campus locations
+3. RSVP · create a plan · **I want to do something**
+4. Chat is secondary; system messages log joins and new plans
+5. Mark a plan done → hang feedback → Circle Momentum
+
+`create_hangout_circle(university_id)` creates the circle + first membership atomically (needed because `INSERT … RETURNING` must pass SELECT RLS before membership exists). Creators can also `SELECT` rows where `formed_by = current_profile_id()`.
+
+Two signed-in members of the same Circle see each other’s plans and RSVPs after refresh or over Realtime.
 
 ## Scripts
 

@@ -17,7 +17,7 @@ import { Chip } from "@/components/ui/Chip";
 import { MemberCard } from "@/components/ui/MemberCard";
 import { Modal } from "@/components/ui/Modal";
 import { ProgressBar } from "@/components/ui/Progress";
-import { AppHeader } from "@/components/layout/AppHeader";
+import { HangoutsHome } from "@/components/hangouts/HangoutsHome";
 import { useDemo } from "@/context/DemoContext";
 import { useIdentity } from "@/context/IdentityContext";
 import { computeCircleStrength, STAGE_FLOW } from "@/lib/circleStrength";
@@ -113,20 +113,8 @@ export default function HomePage() {
     );
   }
 
-  if (identity.configured && identity.profile && !state.circle) {
-    return (
-      <main className="mx-auto max-w-3xl px-5 py-6 sm:px-8">
-        <AppHeader />
-        <p className="text-sm text-slate-500">{greeting()},</p>
-        <h1 className="font-display text-3xl font-bold text-slate-900">{firstName}.</h1>
-        <section className="card-surface mt-8 p-6">
-          <h2 className="font-display text-xl font-bold">Your Circle</h2>
-          <p className="mt-2 text-slate-600">
-            You&apos;re in. Matching will place you with a small group — that work lives in Path 2.
-          </p>
-        </section>
-      </main>
-    );
+  if (identity.configured && identity.profile?.onboarding_completed_at) {
+    return <HangoutsHome />;
   }
 
   if (!user || !state.circle || !strength) {

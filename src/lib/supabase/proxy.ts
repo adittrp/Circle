@@ -42,7 +42,8 @@ export async function updateSession(request: NextRequest) {
   const isProtected =
     path.startsWith("/onboarding") ||
     path.startsWith("/home") ||
-    path.startsWith("/profile");
+    path.startsWith("/profile") ||
+    path.startsWith("/circles");
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
@@ -67,7 +68,7 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    if (!onboarded && (path.startsWith("/home") || path.startsWith("/profile"))) {
+    if (!onboarded && (path.startsWith("/home") || path.startsWith("/profile") || path.startsWith("/circles"))) {
       const url = request.nextUrl.clone();
       url.pathname = "/onboarding";
       url.search = "";

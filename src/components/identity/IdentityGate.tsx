@@ -14,7 +14,11 @@ export function IdentityGate({ children }: { children: ReactNode }) {
     const onboarded = Boolean(profile?.onboarding_completed_at);
 
     if (user && !onboarded && pathname !== "/onboarding" && pathname !== "/verify") {
-      if (pathname.startsWith("/home") || pathname.startsWith("/profile")) {
+      if (
+        pathname.startsWith("/home") ||
+        pathname.startsWith("/profile") ||
+        pathname.startsWith("/circles")
+      ) {
         router.replace("/onboarding");
       }
     }

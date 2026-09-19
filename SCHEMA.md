@@ -34,20 +34,35 @@ The **circle** is the persistent object, not a 1:1 match.
 | `circles` | Group on a campus; `stage` is `introduced` → `met_once` → `met_again` → `regular` |
 | `circle_members` | Membership. Partial unique `(circle_id, profile_id)` while `left_at` is null |
 | `activities` | Plans owned by a circle. Optional `campus_location_id` + `location_label` |
-| `activity_rsvps` | Own RSVP: `pending` / `in` / `cant` |
+| `activity_rsvps` | Own RSVP: `pending` / `in` / `maybe` / `cant` |
 | `activity_feedback` | Rate the **hang**, never other people. Unique per (activity, profile) |
 | `matching_rounds` | Optional batch-matching stub |
 
 Users can insert a circle for their own university and manage their own membership/RSVP/feedback. Members can read circle rows they belong to.
 
-## Path 3 — Communities / posts / chat (empty, ready)
+## Path 3 — Circles / hangouts (this team)
+
+Plans, RSVPs, first mission, “I want to do something,” Circle chat, feedback, and Circle Momentum. Uses **Path 2 tables** plus `messages`.
 
 | Object | Purpose |
 | --- | --- |
-| `communities` | Campus-scoped groups (`major` / `campus` / `interest`) |
-| `community_members` | Own join/leave |
-| `posts` | Campus discussion. `source_url` reserved for a later extension. `suggested_activity_id` is the post→plan stub |
-| `messages` | Chat. Exactly one of `circle_id` **or** `community_id` must be set |
+| `circles` / `circle_members` | Persistent group Path 2 matching (or a hangout bootstrap) puts you in |
+| `activities` | Plans. `mood = 'first_mission'` is unique per circle while not cancelled |
+| `activity_rsvps` | Own RSVP: `pending` / `in` / `maybe` / `cant` |
+| `activity_feedback` | Rate the **hang**, never other people. Members can read circle hang feedback to steer suggestions |
+| `messages` | Circle chat. `is_system` for join/plan/RSVP/nudge copy. Exactly one of `circle_id` or `community_id` |
+| `message_reactions` | Optional emoji reactions on chat |
+| `campus_locations` | University catalog for suggestions (Path 1) |
+| `circle_rules` | Consumed if Path 4 wrote a row. Do not own this table |
+| `create_hangout_circle(university_id)` | Path 3 RPC: creates circle + first membership atomically |
+
+Realtime: `messages`, `activities`, `activity_rsvps`, `message_reactions`.
+
+Select note: creators can read circles where `formed_by = current_profile_id()` so `INSERT … RETURNING` works before membership exists.
+
+## Path 3b — Communities / posts (reserved)
+
+Campus-wide Reddit-like communities stay on `communities` / `posts`. Hangouts must not mix that UX with Circle chat.
 
 ## Path 4 — Trust / safety (empty, ready)
 
@@ -73,4 +88,5 @@ Users can insert a circle for their own university and manage their own membersh
 - Unauthenticated `/onboarding`, `/home`, `/profile` → `/signin`
 - Authenticated incomplete → `/onboarding`
 - Authenticated complete → `/home`
+- `/circles` is Path 3 hangouts (auth required)
 - `/matching` and `/circle` stay open for the Path 2 demo
